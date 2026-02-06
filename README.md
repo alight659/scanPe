@@ -2,22 +2,6 @@
 
 This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines Express, and more.
 
-## Features
-
-- **TypeScript** - For type safety and improved developer experience
-- **React Native** - Build mobile apps using React
-- **Expo** - Tools for React Native development
-- **TailwindCSS** - Utility-first CSS for rapid UI development
-- **shadcn/ui** - Reusable UI components
-- **Express** - Fast, unopinionated web framework
-- **Bun** - Runtime environment
-- **Prisma** - TypeScript-first ORM
-- **PostgreSQL** - Database engine
-- **Authentication** - Better-Auth
-- **Biome** - Linting and formatting
-- **Husky** - Git hooks for code quality
-- **Turborepo** - Optimized monorepo build system
-
 ## Getting Started
 
 First, install the dependencies:
@@ -25,6 +9,14 @@ First, install the dependencies:
 ```bash
 bun install
 ```
+
+Then run it using
+
+```bash
+bun dev
+```
+
+A QR will appear in terminal, make sure you are in the same `intranet`. Your PC and  mobile should be connected to same network. Now download `Expo-Go` application from the playstore. Check it out here at https://expo.dev/go . Once downloaded, scan it with your phone andthe app will open in your mobile.
 
 ## Database Setup
 
