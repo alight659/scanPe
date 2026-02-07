@@ -9,7 +9,7 @@ neonConfig.webSocketConstructor = ws;
 neonConfig.poolQueryViaFetch = true;
 
 const adapter = new PrismaNeon({
-  connectionString: env.DATABASE_URL,
+	connectionString: env.DATABASE_URL,
 });
 
 const prisma = new PrismaClient({ adapter });
