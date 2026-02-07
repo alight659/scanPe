@@ -1,4 +1,5 @@
 import "@/polyfills";
+import "../global.css";
 import {
 	DarkTheme,
 	DefaultTheme,
@@ -8,7 +9,7 @@ import {
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useRef } from "react";
-import { Platform, StyleSheet } from "react-native";
+import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
@@ -33,12 +34,6 @@ const useIsomorphicLayoutEffect =
 		? React.useEffect
 		: React.useLayoutEffect;
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
-});
-
 export default function RootLayout() {
 	const hasMounted = useRef(false);
 	const { colorScheme, isDarkColorScheme } = useColorScheme();
@@ -60,7 +55,7 @@ export default function RootLayout() {
 	return (
 		<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
 			<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-			<GestureHandlerRootView style={styles.container}>
+			<GestureHandlerRootView className="flex-1">
 				<Stack>
 					<Stack.Screen name="(auth)" options={{ headerShown: false }} />
 					<Stack.Screen name="(app)" options={{ headerShown: false }} />

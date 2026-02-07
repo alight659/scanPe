@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
 	ActivityIndicator,
-	StyleSheet,
 	Text,
 	TextInput,
 	TouchableOpacity,
@@ -49,30 +48,31 @@ function SignIn() {
 
 	return (
 		<View
-			style={[
-				styles.card,
-				{ backgroundColor: theme.card, borderColor: theme.border },
-			]}
+			className="mt-4 border p-4"
+			style={{
+				backgroundColor: theme.card,
+				borderColor: theme.border,
+			}}
 		>
-			<Text style={[styles.title, { color: theme.text }]}>Sign In</Text>
+			<Text className="mb-3 font-bold text-lg" style={{ color: theme.text }}>
+				Sign In
+			</Text>
 
 			{error ? (
 				<View>
-					<Text style={[styles.errorText, { color: theme.notification }]}>
+					<Text className="text-sm" style={{ color: theme.notification }}>
 						{error}
 					</Text>
 				</View>
 			) : null}
 
 			<TextInput
-				style={[
-					styles.input,
-					{
-						color: theme.text,
-						borderColor: theme.border,
-						backgroundColor: theme.background,
-					},
-				]}
+				className="mb-3 border p-3 text-base"
+				style={{
+					color: theme.text,
+					borderColor: theme.border,
+					backgroundColor: theme.background,
+				}}
 				placeholder="Email"
 				placeholderTextColor={theme.text}
 				value={form.email}
@@ -82,14 +82,12 @@ function SignIn() {
 			/>
 
 			<TextInput
-				style={[
-					styles.input,
-					{
-						color: theme.text,
-						borderColor: theme.border,
-						backgroundColor: theme.background,
-					},
-				]}
+				className="mb-3 border p-3 text-base"
+				style={{
+					color: theme.text,
+					borderColor: theme.border,
+					backgroundColor: theme.background,
+				}}
 				placeholder="Password"
 				placeholderTextColor={theme.text}
 				value={form.password}
@@ -100,54 +98,20 @@ function SignIn() {
 			<TouchableOpacity
 				onPress={handleLogin}
 				disabled={isLoading}
-				style={[
-					styles.button,
-					{ backgroundColor: theme.primary, opacity: isLoading ? 0.5 : 1 },
-				]}
+				className="items-center justify-center p-3"
+				style={{
+					backgroundColor: theme.primary,
+					opacity: isLoading ? 0.5 : 1,
+				}}
 			>
 				{isLoading ? (
 					<ActivityIndicator size="small" color="#ffffff" />
 				) : (
-					<Text style={styles.buttonText}>Sign In</Text>
+					<Text className="text-base text-white">Sign In</Text>
 				)}
 			</TouchableOpacity>
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	card: {
-		marginTop: 16,
-		padding: 16,
-		borderWidth: 1,
-	},
-	title: {
-		fontSize: 18,
-		fontWeight: "bold",
-		marginBottom: 12,
-	},
-	errorContainer: {
-		marginBottom: 12,
-		padding: 8,
-	},
-	errorText: {
-		fontSize: 14,
-	},
-	input: {
-		borderWidth: 1,
-		padding: 12,
-		fontSize: 16,
-		marginBottom: 12,
-	},
-	button: {
-		padding: 12,
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	buttonText: {
-		color: "#ffffff",
-		fontSize: 16,
-	},
-});
 
 export { SignIn };

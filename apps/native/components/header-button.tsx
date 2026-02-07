@@ -1,6 +1,6 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { forwardRef } from "react";
-import { Pressable, StyleSheet, type View } from "react-native";
+import { Pressable, type View } from "react-native";
 
 import { NAV_THEME } from "@/lib/constants";
 import { useColorScheme } from "@/lib/use-color-scheme";
@@ -14,12 +14,10 @@ export const HeaderButton = forwardRef<View, { onPress?: () => void }>(
 			<Pressable
 				ref={ref}
 				onPress={onPress}
-				style={({ pressed }) => [
-					styles.button,
-					{
-						backgroundColor: pressed ? theme.background : theme.card,
-					},
-				]}
+				className="mr-2 p-2"
+				style={({ pressed }) => ({
+					backgroundColor: pressed ? theme.background : theme.card,
+				})}
 			>
 				{({ pressed }) => (
 					<FontAwesome
@@ -35,10 +33,3 @@ export const HeaderButton = forwardRef<View, { onPress?: () => void }>(
 		);
 	},
 );
-
-const styles = StyleSheet.create({
-	button: {
-		padding: 8,
-		marginRight: 8,
-	},
-});

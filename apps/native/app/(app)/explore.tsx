@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 
 import { Container } from "@/components/container";
 import { NAV_THEME } from "@/lib/constants";
@@ -10,24 +10,37 @@ export default function Explore() {
 
 	return (
 		<Container>
-			<ScrollView style={styles.scrollView}>
-				<View style={styles.content}>
-					<Text style={[styles.title, { color: theme.text }]}>Explore</Text>
-					<Text style={[styles.subtitle, { color: theme.text, opacity: 0.7 }]}>
+			<ScrollView className="flex-1 p-4">
+				<View className="py-4">
+					<Text
+						className="mb-2 font-bold text-2xl"
+						style={{ color: theme.text }}
+					>
+						Explore
+					</Text>
+					<Text
+						className="mb-6 text-base"
+						style={{ color: theme.text, opacity: 0.7 }}
+					>
 						Discover more features and content
 					</Text>
 
 					<View
-						style={[
-							styles.card,
-							{ backgroundColor: theme.card, borderColor: theme.border },
-						]}
+						className="rounded-lg border p-4"
+						style={{
+							backgroundColor: theme.card,
+							borderColor: theme.border,
+						}}
 					>
-						<Text style={[styles.cardTitle, { color: theme.text }]}>
+						<Text
+							className="mb-2 font-bold text-lg"
+							style={{ color: theme.text }}
+						>
 							Coming Soon
 						</Text>
 						<Text
-							style={[styles.cardText, { color: theme.text, opacity: 0.7 }]}
+							className="text-sm leading-5"
+							style={{ color: theme.text, opacity: 0.7 }}
 						>
 							This section will contain exciting features and content. Stay
 							tuned for updates!
@@ -38,36 +51,3 @@ export default function Explore() {
 		</Container>
 	);
 }
-
-const styles = StyleSheet.create({
-	scrollView: {
-		flex: 1,
-		padding: 16,
-	},
-	content: {
-		paddingVertical: 16,
-	},
-	title: {
-		fontSize: 24,
-		fontWeight: "bold",
-		marginBottom: 8,
-	},
-	subtitle: {
-		fontSize: 16,
-		marginBottom: 24,
-	},
-	card: {
-		padding: 16,
-		borderWidth: 1,
-		borderRadius: 8,
-	},
-	cardTitle: {
-		fontSize: 18,
-		fontWeight: "bold",
-		marginBottom: 8,
-	},
-	cardText: {
-		fontSize: 14,
-		lineHeight: 20,
-	},
-});

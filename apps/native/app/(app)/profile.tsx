@@ -1,10 +1,4 @@
-import {
-	ScrollView,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { Container } from "@/components/container";
 import { authClient } from "@/lib/auth-client";
@@ -18,51 +12,65 @@ export default function Profile() {
 
 	return (
 		<Container>
-			<ScrollView style={styles.scrollView}>
-				<View style={styles.content}>
-					<Text style={[styles.title, { color: theme.text }]}>Profile</Text>
+			<ScrollView className="flex-1">
+				<View className="p-4">
+					<Text
+						className="mb-6 font-bold text-[28px]"
+						style={{ color: theme.text }}
+					>
+						Profile
+					</Text>
 
 					{session?.user ? (
 						<>
 							<View
-								style={[
-									styles.userCard,
-									{ backgroundColor: theme.card, borderColor: theme.border },
-								]}
+								className="mb-6 rounded-lg border p-4"
+								style={{
+									backgroundColor: theme.card,
+									borderColor: theme.border,
+								}}
 							>
-								<View style={styles.userInfo}>
+								<View className="mb-4">
 									<Text
-										style={[styles.label, { color: theme.text, opacity: 0.7 }]}
+										className="mb-1 text-xs uppercase tracking-wider"
+										style={{ color: theme.text, opacity: 0.7 }}
 									>
 										Name
 									</Text>
-									<Text style={[styles.value, { color: theme.text }]}>
+									<Text
+										className="font-medium text-base"
+										style={{ color: theme.text }}
+									>
 										{session.user.name}
 									</Text>
 								</View>
 
-								<View style={styles.userInfo}>
+								<View>
 									<Text
-										style={[styles.label, { color: theme.text, opacity: 0.7 }]}
+										className="mb-1 text-xs uppercase tracking-wider"
+										style={{ color: theme.text, opacity: 0.7 }}
 									>
 										Email
 									</Text>
-									<Text style={[styles.value, { color: theme.text }]}>
+									<Text
+										className="font-medium text-base"
+										style={{ color: theme.text }}
+									>
 										{session.user.email}
 									</Text>
 								</View>
 							</View>
 
 							<TouchableOpacity
-								style={[
-									styles.signOutButton,
-									{ backgroundColor: theme.notification },
-								]}
+								className="items-center rounded-lg p-4"
+								style={{ backgroundColor: theme.notification }}
 								onPress={() => {
 									authClient.signOut();
 								}}
 							>
-								<Text style={styles.signOutText}>Sign Out</Text>
+								<Text className="font-semibold text-base text-white">
+									Sign Out
+								</Text>
 							</TouchableOpacity>
 						</>
 					) : null}
@@ -71,47 +79,3 @@ export default function Profile() {
 		</Container>
 	);
 }
-
-const styles = StyleSheet.create({
-	scrollView: {
-		flex: 1,
-	},
-	content: {
-		padding: 16,
-	},
-	title: {
-		fontSize: 28,
-		fontWeight: "bold",
-		marginBottom: 24,
-		color: "#000",
-	},
-	userCard: {
-		marginBottom: 24,
-		padding: 16,
-		borderWidth: 1,
-		borderRadius: 8,
-	},
-	userInfo: {
-		marginBottom: 16,
-	},
-	label: {
-		fontSize: 12,
-		marginBottom: 4,
-		textTransform: "uppercase",
-		letterSpacing: 0.5,
-	},
-	value: {
-		fontSize: 16,
-		fontWeight: "500",
-	},
-	signOutButton: {
-		padding: 16,
-		borderRadius: 8,
-		alignItems: "center",
-	},
-	signOutText: {
-		color: "#ffffff",
-		fontSize: 16,
-		fontWeight: "600",
-	},
-});

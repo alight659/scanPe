@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 
 import { Container } from "@/components/container";
 import { authClient } from "@/lib/auth-client";
@@ -12,26 +12,36 @@ export default function Home() {
 
 	return (
 		<Container>
-			<ScrollView style={styles.scrollView}>
-				<View style={styles.content}>
-					<Text style={[styles.title, { color: theme.text }]}>scanPe</Text>
-					<Text style={[styles.subtitle, { color: theme.text, opacity: 0.7 }]}>
+			<ScrollView className="flex-1">
+				<View className="p-4">
+					<Text
+						className="mb-2 font-bold text-[28px]"
+						style={{ color: theme.text }}
+					>
+						scanPe
+					</Text>
+					<Text
+						className="mb-6 text-base"
+						style={{ color: theme.text, opacity: 0.7 }}
+					>
 						Welcome to your personal dashboard
 					</Text>
 
 					{session?.user ? (
 						<View
-							style={[
-								styles.userCard,
-								{ backgroundColor: theme.card, borderColor: theme.border },
-							]}
+							className="mb-4 rounded-lg border p-4"
+							style={{
+								backgroundColor: theme.card,
+								borderColor: theme.border,
+							}}
 						>
-							<Text style={[styles.welcomeText, { color: theme.text }]}>
+							<Text className="mb-1 text-lg" style={{ color: theme.text }}>
 								Welcome back,{" "}
-								<Text style={styles.userName}>{session.user.name}</Text>!
+								<Text className="font-bold">{session.user.name}</Text>!
 							</Text>
 							<Text
-								style={[styles.userEmail, { color: theme.text, opacity: 0.7 }]}
+								className="text-sm"
+								style={{ color: theme.text, opacity: 0.7 }}
 							>
 								{session.user.email}
 							</Text>
@@ -39,16 +49,21 @@ export default function Home() {
 					) : null}
 
 					<View
-						style={[
-							styles.infoCard,
-							{ backgroundColor: theme.card, borderColor: theme.border },
-						]}
+						className="rounded-lg border p-4"
+						style={{
+							backgroundColor: theme.card,
+							borderColor: theme.border,
+						}}
 					>
-						<Text style={[styles.infoTitle, { color: theme.text }]}>
+						<Text
+							className="mb-2 font-bold text-base"
+							style={{ color: theme.text }}
+						>
 							Getting Started
 						</Text>
 						<Text
-							style={[styles.infoText, { color: theme.text, opacity: 0.7 }]}
+							className="text-sm leading-5"
+							style={{ color: theme.text, opacity: 0.7 }}
 						>
 							Use the tabs below to navigate through the app. Visit your Profile
 							to manage your account.
@@ -59,51 +74,3 @@ export default function Home() {
 		</Container>
 	);
 }
-
-const styles = StyleSheet.create({
-	scrollView: {
-		flex: 1,
-	},
-	content: {
-		padding: 16,
-	},
-	title: {
-		fontSize: 28,
-		fontWeight: "bold",
-		marginBottom: 8,
-	},
-	subtitle: {
-		fontSize: 16,
-		marginBottom: 24,
-	},
-	userCard: {
-		marginBottom: 16,
-		padding: 16,
-		borderWidth: 1,
-		borderRadius: 8,
-	},
-	welcomeText: {
-		fontSize: 18,
-		marginBottom: 4,
-	},
-	userName: {
-		fontWeight: "bold",
-	},
-	userEmail: {
-		fontSize: 14,
-	},
-	infoCard: {
-		padding: 16,
-		borderWidth: 1,
-		borderRadius: 8,
-	},
-	infoTitle: {
-		fontSize: 16,
-		fontWeight: "bold",
-		marginBottom: 8,
-	},
-	infoText: {
-		fontSize: 14,
-		lineHeight: 20,
-	},
-});
