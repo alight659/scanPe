@@ -1,6 +1,10 @@
 # scanPe
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines Express, and more.
+<div align="center">
+
+![alt text](apps/native/assets/images/logo.png)
+
+</div>
 
 ## Getting Started
 
@@ -16,7 +20,10 @@ Then run it using
 bun dev
 ```
 
-A QR will appear in terminal, make sure you are in the same `intranet`. Your PC and  mobile should be connected to same network. Now download `Expo-Go` application from the playstore. Check it out here at https://expo.dev/go . Once downloaded, scan it with your phone andthe app will open in your mobile.
+A QR will appear in terminal, make sure you are in the same `intranet`. Your PC
+and mobile should be connected to same network. Now download `Expo-Go`
+application from the playstore. Check it out here at https://expo.dev/go . Once
+downloaded, scan it with your phone andthe app will open in your mobile.
 
 ## Database Setup
 
@@ -37,9 +44,9 @@ Then, run the development server:
 bun run dev
 ```
 
-Open [http://localhost:3001](http://localhost:3001) in your browser to see the web application.
-Use the Expo Go app to run the mobile application.
-The API is running at [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3001](http://localhost:3001) in your browser to see the
+web application. Use the Expo Go app to run the mobile application. The API is
+running at [http://localhost:3000](http://localhost:3000).
 
 ## Git Hooks and Formatting
 

@@ -3,8 +3,8 @@ import "../global.css";
 import {
 	DarkTheme,
 	DefaultTheme,
+	ThemeProvider as NavigationThemeProvider,
 	type Theme,
-	ThemeProvider,
 } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -14,7 +14,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
 import { NAV_THEME } from "@/lib/constants";
-import { useColorScheme } from "@/lib/use-color-scheme";
+import { ThemeProvider, useColorScheme } from "@/lib/theme-provider";
 
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,
@@ -34,7 +34,7 @@ const useIsomorphicLayoutEffect =
 		? React.useEffect
 		: React.useLayoutEffect;
 
-export default function RootLayout() {
+function RootLayoutNav() {
 	const hasMounted = useRef(false);
 	const { colorScheme, isDarkColorScheme } = useColorScheme();
 	const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
@@ -46,14 +46,16 @@ export default function RootLayout() {
 		setAndroidNavigationBar(colorScheme);
 		setIsColorSchemeLoaded(true);
 		hasMounted.current = true;
-	}, []);
+	}, [colorScheme]);
 
 	if (!isColorSchemeLoaded) {
 		return null;
 	}
 
 	return (
-		<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+		<NavigationThemeProvider
+			value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
+		>
 			<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
 			<GestureHandlerRootView className="flex-1">
 				<Stack>
@@ -65,6 +67,14 @@ export default function RootLayout() {
 					/>
 				</Stack>
 			</GestureHandlerRootView>
+		</NavigationThemeProvider>
+	);
+}
+
+export default function RootLayout() {
+	return (
+		<ThemeProvider>
+			<RootLayoutNav />
 		</ThemeProvider>
 	);
 }

@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 
 import { Container } from "@/components/container";
 import { NAV_THEME } from "@/lib/constants";
-import { useColorScheme } from "@/lib/use-color-scheme";
+import { useColorScheme } from "@/lib/theme-provider";
 
 export default function NotFoundScreen() {
 	const { colorScheme } = useColorScheme();

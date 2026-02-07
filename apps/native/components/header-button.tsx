@@ -3,7 +3,7 @@ import { forwardRef } from "react";
 import { Pressable, type View } from "react-native";
 
 import { NAV_THEME } from "@/lib/constants";
-import { useColorScheme } from "@/lib/use-color-scheme";
+import { useColorScheme } from "@/lib/theme-provider";
 
 export const HeaderButton = forwardRef<View, { onPress?: () => void }>(
 	({ onPress }, ref) => {

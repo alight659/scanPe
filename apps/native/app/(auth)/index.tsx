@@ -1,13 +1,21 @@
 import { Image } from "expo-image";
 import { Redirect } from "expo-router";
 import { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+	KeyboardAvoidingView,
+	Platform,
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
+
 import { Container } from "@/components/container";
 import { SignIn } from "@/components/sign-in";
 import { SignUp } from "@/components/sign-up";
 import { authClient } from "@/lib/auth-client";
 import { NAV_THEME } from "@/lib/constants";
-import { useColorScheme } from "@/lib/use-color-scheme";
+import { useColorScheme } from "@/lib/theme-provider";
 
 export default function AuthScreen() {
 	const { colorScheme } = useColorScheme();
@@ -24,32 +32,30 @@ export default function AuthScreen() {
 
 	return (
 		<Container>
-			<ScrollView
+			<KeyboardAvoidingView
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
 				className="flex-1"
-				contentContainerStyle={{ flexGrow: 1 }}
-				showsVerticalScrollIndicator={false}
+				keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
 			>
-				<View className="flex-1 justify-between px-6 pt-16 pb-8">
-					<View className="mb-8 items-center">
-						<View
-							className="h-50 w-50 items-center justify-center"
-							style={{
-								backgroundColor: "rgba(99, 102, 241, 0.08)",
-								borderRadius: 200,
-								shadowColor: "#6366f1",
-								shadowOffset: {
-									width: 0,
-									height: 4,
-								},
-								shadowOpacity: 0.12,
-								shadowRadius: 12,
-								elevation: 6,
-							}}
-						>
+				<ScrollView
+					className="flex-1"
+					contentContainerStyle={{
+						flexGrow: 1,
+						justifyContent: "center",
+						paddingBottom: 100,
+					}}
+					showsVerticalScrollIndicator={true}
+					keyboardShouldPersistTaps="handled"
+					keyboardDismissMode="on-drag"
+					contentInsetAdjustmentBehavior="automatic"
+				>
+					<View className="px-6">
+						{/* Logo section */}
+						<View className="mb-8 items-center">
 							<Image
 								style={{
-									width: 150,
-									height: 150,
+									width: 170,
+									height: 170,
 								}}
 								source="https://qaqtvoxob8zyd7wl.public.blob.vercel-storage.com/logo.png"
 								placeholder={{ blurhash }}
@@ -58,49 +64,50 @@ export default function AuthScreen() {
 								onError={(error) => console.log("Image load error:", error)}
 							/>
 						</View>
-					</View>
 
-					<View className="mb-8 items-center">
-						<Text
-							className="mb-2.5 font-bold text-[32px]"
-							style={{ color: theme.text, letterSpacing: -0.5 }}
-						>
-							{isSignUp ? "Create Account" : "Welcome Back"}
-						</Text>
-						<Text
-							className="px-5 text-center text-[15px] leading-[22px]"
-							style={{ color: theme.text, opacity: 0.6 }}
-						>
-							{isSignUp
-								? "Sign up to get started with scanPe"
-								: "Sign in to continue to your account"}
-						</Text>
-					</View>
-
-					<View className="max-h-[400px] flex-1 justify-center">
-						{isSignUp ? <SignUp /> : <SignIn />}
-					</View>
-
-					<View className="flex-row items-center justify-center pt-6">
-						<Text
-							className="text-[15px]"
-							style={{ color: theme.text, opacity: 0.7 }}
-						>
-							{isSignUp
-								? "Already have an account? "
-								: "Don't have an account? "}
-						</Text>
-						<TouchableOpacity onPress={() => setIsSignUp(!isSignUp)}>
+						{/* Welcome section */}
+						<View className="mb-6 items-center">
 							<Text
-								className="font-bold text-[15px]"
-								style={{ color: theme.primary }}
+								className="mb-2 font-bold text-2xl text-[#D1D5DC]"
+								style={{ letterSpacing: -0.5 }}
 							>
-								{isSignUp ? "Log In" : "Sign Up"}
+								{isSignUp ? "Create Account" : "Welcome Back"}
 							</Text>
-						</TouchableOpacity>
+							<Text
+								className="px-4 text-center text-sm leading-5"
+								style={{ color: theme.text, opacity: 0.6 }}
+							>
+								{isSignUp
+									? "Sign up to get started with scanPe"
+									: "Sign in to continue to your account"}
+							</Text>
+						</View>
+
+						{/* Form section */}
+						<View className="mb-6">{isSignUp ? <SignUp /> : <SignIn />}</View>
+
+						{/* Footer */}
+						<View className="flex-row items-center justify-center py-4">
+							<Text
+								className="text-sm"
+								style={{ color: theme.text, opacity: 0.7 }}
+							>
+								{isSignUp
+									? "Already have an account? "
+									: "Don't have an account? "}
+							</Text>
+							<TouchableOpacity onPress={() => setIsSignUp(!isSignUp)}>
+								<Text
+									className="font-bold text-sm"
+									style={{ color: theme.primary }}
+								>
+									{isSignUp ? "Log In" : "Sign Up"}
+								</Text>
+							</TouchableOpacity>
+						</View>
 					</View>
-				</View>
-			</ScrollView>
+				</ScrollView>
+			</KeyboardAvoidingView>
 		</Container>
 	);
 }
