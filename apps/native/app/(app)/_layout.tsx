@@ -94,6 +94,12 @@ export default function AppLayout() {
 					href: null,
 				}}
 			/>
+			<Tabs.Screen
+				name="support"
+				options={{
+					href: null,
+				}}
+			/>
 		</Tabs>
 	);
 }

@@ -35,18 +35,15 @@ function SignUp() {
 				},
 				{
 					onError(error) {
-						console.log("error.....", error);
 						setError(error.error?.message || "Failed to sign up");
 						setIsLoading(false);
 					},
 					onSuccess() {
-						console.log("success.....");
 						setName("");
 						setEmail("");
 						setPassword("");
 					},
 					onFinished() {
-						console.log("finished.....");
 						setIsLoading(false);
 					},
 				},

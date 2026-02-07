@@ -176,12 +176,32 @@ export default function ProfileScreen() {
 							subtitle="English"
 							isDark={isDarkColorScheme}
 						/>
-						<MenuItem
-							icon="help-circle"
-							title="Help & Support"
-							isDark={isDarkColorScheme}
-							isLast
-						/>
+						<TouchableOpacity
+							onPress={() => router.push("/(app)/support")}
+							className="flex-row items-center justify-between px-4 py-4"
+						>
+							<View className="flex-row items-center">
+								<View
+									className={`mr-3 rounded-full p-2 ${isDarkColorScheme ? "bg-gray-800" : "bg-gray-100"}`}
+								>
+									<Feather
+										name="help-circle"
+										size={20}
+										color={isDarkColorScheme ? "#9CA3AF" : "#6B7280"}
+									/>
+								</View>
+								<Text
+									className={`font-medium ${isDarkColorScheme ? "text-white" : "text-gray-900"}`}
+								>
+									AI Support
+								</Text>
+							</View>
+							<Feather
+								name="chevron-right"
+								size={20}
+								color={isDarkColorScheme ? "#6B7280" : "#9CA3AF"}
+							/>
+						</TouchableOpacity>
 					</View>
 
 					{/* Logout Button */}
