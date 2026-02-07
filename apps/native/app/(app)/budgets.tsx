@@ -1,11 +1,13 @@
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { Container } from "@/components/container";
+import { useI18n } from "@/lib/i18n/i18n-provider";
 import { useColorScheme } from "@/lib/theme-provider";
 
 export default function BudgetsScreen() {
 	const { colorScheme } = useColorScheme();
 	const isDark = colorScheme === "dark";
+	const { t } = useI18n();
 
 	return (
 		<Container>
@@ -14,7 +16,7 @@ export default function BudgetsScreen() {
 					<Text
 						className={`mb-6 font-bold text-3xl ${isDark ? "text-white" : "text-gray-900"}`}
 					>
-						Budgets
+						{t("budget.budgets")}
 					</Text>
 
 					{/* Daily Budget Card */}
@@ -24,7 +26,7 @@ export default function BudgetsScreen() {
 						<Text
 							className={`mb-2 font-medium text-sm uppercase ${isDark ? "text-gray-400" : "text-gray-500"}`}
 						>
-							Daily Budget
+							{t("budget.dailyBudget")}
 						</Text>
 						<Text
 							className={`font-bold text-3xl ${isDark ? "text-white" : "text-gray-900"}`}
@@ -37,7 +39,7 @@ export default function BudgetsScreen() {
 						<Text
 							className={`mt-2 text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}
 						>
-							$68 spent • $32 remaining
+							$68 spent • $32 {t("budget.remaining")}
 						</Text>
 					</View>
 
@@ -48,7 +50,7 @@ export default function BudgetsScreen() {
 						<Text
 							className={`mb-2 font-medium text-sm uppercase ${isDark ? "text-gray-400" : "text-gray-500"}`}
 						>
-							Monthly Budget
+							{t("budget.monthlyBudget")}
 						</Text>
 						<Text
 							className={`font-bold text-3xl ${isDark ? "text-white" : "text-gray-900"}`}
@@ -61,7 +63,7 @@ export default function BudgetsScreen() {
 						<Text
 							className={`mt-2 text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}
 						>
-							$1,200 spent • $800 remaining
+							$1,200 spent • $800 {t("budget.remaining")}
 						</Text>
 					</View>
 
@@ -74,12 +76,12 @@ export default function BudgetsScreen() {
 								<Text
 									className={`font-semibold ${isDark ? "text-white" : "text-gray-900"}`}
 								>
-									Strict Mode
+									{t("budget.strictMode")}
 								</Text>
 								<Text
 									className={`mt-1 text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}
 								>
-									Prevent payments when budget is exceeded
+									{t("budget.strictModeDesc")}
 								</Text>
 							</View>
 							<View className="h-6 w-11 rounded-full bg-emerald-500">

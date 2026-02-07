@@ -2,6 +2,8 @@ import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { Text, View } from "react-native";
 
+import { useI18n } from "@/lib/i18n/i18n-provider";
+
 interface Transaction {
 	id: string;
 	merchant: string;
@@ -19,6 +21,27 @@ interface TransactionItemProps {
 }
 
 export function TransactionItem({ transaction, isDark }: TransactionItemProps) {
+	const { t } = useI18n();
+
+	// Get localized category
+	const getLocalizedCategory = (category: string) => {
+		const categoryKey = category.toLowerCase();
+		const translation = t(`categories.${categoryKey}`);
+		// If translation is not found, return original
+		return translation === `categories.${categoryKey}` ? category : translation;
+	};
+
+	// Localize time portion (Today, Yesterday)
+	const getLocalizedTime = (time: string) => {
+		if (time.startsWith("Today")) {
+			return time.replace("Today", t("transactions.today"));
+		}
+		if (time.startsWith("Yesterday")) {
+			return time.replace("Yesterday", t("transactions.yesterday"));
+		}
+		return time;
+	};
+
 	return (
 		<View
 			className={`mb-3 flex-row items-center rounded-xl border p-4 ${
@@ -47,7 +70,8 @@ export function TransactionItem({ transaction, isDark }: TransactionItemProps) {
 				<Text
 					className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}
 				>
-					{transaction.category} • {transaction.time}
+					{getLocalizedCategory(transaction.category)} •{" "}
+					{getLocalizedTime(transaction.time)}
 				</Text>
 			</View>
 

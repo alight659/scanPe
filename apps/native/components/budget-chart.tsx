@@ -1,12 +1,14 @@
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
+
+import { useI18n } from "@/lib/i18n/i18n-provider";
 
 interface BudgetChartProps {
 	spent: number;
 	total: number;
-	period: "daily" | "monthly";
-	onPeriodChange: (period: "daily" | "monthly") => void;
+	period: "daily" | "monthly" | "yearly";
+	onPeriodChange: (period: "daily" | "monthly" | "yearly") => void;
 	isDark: boolean;
 }
 
@@ -17,6 +19,7 @@ export function BudgetChart({
 	onPeriodChange,
 	isDark,
 }: BudgetChartProps) {
+	const { t } = useI18n();
 	const remaining = total - spent;
 	const percentage = Math.min((spent / total) * 100, 100);
 	const size = 200;
@@ -25,12 +28,37 @@ export function BudgetChart({
 	const circumference = radius * 2 * Math.PI;
 	const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
+	const getPeriodLabel = () => {
+		switch (period) {
+			case "daily":
+				return t("home.dailyLeft");
+			case "monthly":
+				return t("home.monthlyLeft");
+			case "yearly":
+				return t("home.yearlyLeft");
+		}
+	};
+
+	const handleDailyPress = () => {
+		console.log("Daily pressed");
+		onPeriodChange("daily");
+	};
+
+	const handleMonthlyPress = () => {
+		console.log("Monthly pressed");
+		onPeriodChange("monthly");
+	};
+
+	const handleYearlyPress = () => {
+		console.log("Yearly pressed");
+		onPeriodChange("yearly");
+	};
+
 	return (
-		<View className="items-center">
+		<View style={{ alignItems: "center" }}>
 			{/* Circular Progress */}
-			<View className="relative mb-6">
+			<View style={{ position: "relative", marginBottom: 24 }}>
 				<Svg width={size} height={size}>
-					{/* Background Circle */}
 					<Circle
 						cx={size / 2}
 						cy={size / 2}
@@ -39,7 +67,6 @@ export function BudgetChart({
 						strokeWidth={strokeWidth}
 						fill="none"
 					/>
-					{/* Progress Circle */}
 					<Circle
 						cx={size / 2}
 						cy={size / 2}
@@ -54,64 +81,135 @@ export function BudgetChart({
 					/>
 				</Svg>
 
-				{/* Center Content */}
-				<View className="absolute inset-0 items-center justify-center">
+				<View
+					style={{
+						position: "absolute",
+						inset: 0,
+						alignItems: "center",
+						justifyContent: "center",
+					}}
+				>
 					<Text
-						className={`text-xs uppercase tracking-wider ${isDark ? "text-gray-400" : "text-gray-500"}`}
+						style={{
+							fontSize: 12,
+							textTransform: "uppercase",
+							letterSpacing: 1,
+							color: isDark ? "#9CA3AF" : "#6B7280",
+						}}
 					>
-						{period === "daily" ? "DAILY LEFT" : "MONTHLY LEFT"}
-					</Text>
-					<Text className="font-bold text-4xl text-gray-900 dark:text-gray-200">
-						${remaining}
+						{getPeriodLabel()}
 					</Text>
 					<Text
-						className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}
+						style={{
+							fontSize: 32,
+							fontWeight: "bold",
+							color: isDark ? "#F3F4F6" : "#111827",
+						}}
 					>
-						${spent} spent
+						${remaining.toLocaleString()}
+					</Text>
+					<Text
+						style={{
+							fontSize: 14,
+							color: isDark ? "#9CA3AF" : "#6B7280",
+						}}
+					>
+						${spent.toLocaleString()} {t("home.spent")}
 					</Text>
 				</View>
 			</View>
 
 			{/* Period Toggle */}
 			<View
-				className={`flex-row rounded-full p-1 ${isDark ? "bg-gray-800" : "bg-gray-100"}`}
+				style={{
+					flexDirection: "row",
+					borderRadius: 999,
+					padding: 4,
+					backgroundColor: isDark ? "#1F2937" : "#F3F4F6",
+				}}
 			>
-				<TouchableOpacity
-					onPress={() => onPeriodChange("daily")}
-					className={`rounded-full px-6 py-2 ${
-						period === "daily" ? "bg-white shadow-sm" : "bg-transparent"
-					}`}
+				<Pressable
+					onPress={handleDailyPress}
+					style={{
+						borderRadius: 999,
+						paddingHorizontal: 20,
+						paddingVertical: 8,
+						backgroundColor: period === "daily" ? "#FFFFFF" : "transparent",
+						shadowColor: period === "daily" ? "#000" : "transparent",
+						shadowOffset: { width: 0, height: 1 },
+						shadowOpacity: 0.1,
+						shadowRadius: 2,
+						elevation: period === "daily" ? 2 : 0,
+					}}
 				>
 					<Text
-						className={`font-medium ${
-							period === "daily"
-								? "text-gray-900"
-								: isDark
-									? "text-gray-400"
-									: "text-gray-500"
-						}`}
+						style={{
+							fontWeight: "500",
+							color:
+								period === "daily" ? "#111827" : isDark ? "#9CA3AF" : "#6B7280",
+						}}
 					>
-						Daily
+						{t("home.daily")}
 					</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					onPress={() => onPeriodChange("monthly")}
-					className={`rounded-full px-6 py-2 ${
-						period === "monthly" ? "bg-white shadow-sm" : "bg-transparent"
-					}`}
+				</Pressable>
+
+				<Pressable
+					onPress={handleMonthlyPress}
+					style={{
+						borderRadius: 999,
+						paddingHorizontal: 20,
+						paddingVertical: 8,
+						backgroundColor: period === "monthly" ? "#FFFFFF" : "transparent",
+						shadowColor: period === "monthly" ? "#000" : "transparent",
+						shadowOffset: { width: 0, height: 1 },
+						shadowOpacity: 0.1,
+						shadowRadius: 2,
+						elevation: period === "monthly" ? 2 : 0,
+					}}
 				>
 					<Text
-						className={`font-medium ${
-							period === "monthly"
-								? "text-gray-900"
-								: isDark
-									? "text-gray-400"
-									: "text-gray-500"
-						}`}
+						style={{
+							fontWeight: "500",
+							color:
+								period === "monthly"
+									? "#111827"
+									: isDark
+										? "#9CA3AF"
+										: "#6B7280",
+						}}
 					>
-						Monthly
+						{t("home.monthly")}
 					</Text>
-				</TouchableOpacity>
+				</Pressable>
+
+				<Pressable
+					onPress={handleYearlyPress}
+					style={{
+						borderRadius: 999,
+						paddingHorizontal: 20,
+						paddingVertical: 8,
+						backgroundColor: period === "yearly" ? "#FFFFFF" : "transparent",
+						shadowColor: period === "yearly" ? "#000" : "transparent",
+						shadowOffset: { width: 0, height: 1 },
+						shadowOpacity: 0.1,
+						shadowRadius: 2,
+						elevation: period === "yearly" ? 2 : 0,
+					}}
+				>
+					<Text
+						style={{
+							fontWeight: "500",
+							color:
+								period === "yearly"
+									? "#111827"
+									: isDark
+										? "#9CA3AF"
+										: "#6B7280",
+						}}
+					>
+						{t("home.yearly")}
+					</Text>
+				</Pressable>
 			</View>
 		</View>
 	);

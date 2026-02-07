@@ -2,12 +2,15 @@ import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { Text, View } from "react-native";
 
+import { useI18n } from "@/lib/i18n/i18n-provider";
+
 interface SpendingAlertProps {
 	percentage: number;
 	isDark: boolean;
 }
 
 export function SpendingAlert({ percentage, isDark }: SpendingAlertProps) {
+	const { t } = useI18n();
 	if (percentage < 60) return null;
 
 	return (
@@ -28,13 +31,12 @@ export function SpendingAlert({ percentage, isDark }: SpendingAlertProps) {
 					<Text
 						className={`mb-1 font-semibold ${isDark ? "text-orange-400" : "text-orange-600"}`}
 					>
-						Spending Alert
+						{t("spendingAlert.title")}
 					</Text>
 					<Text
 						className={`text-sm leading-5 ${isDark ? "text-orange-300" : "text-orange-700"}`}
 					>
-						You've used {percentage}% of your daily budget. Slow down to make it
-						through the day!
+						{t("spendingAlert.message", { percentage })}
 					</Text>
 				</View>
 			</View>

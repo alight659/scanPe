@@ -15,6 +15,7 @@ import { Container } from "@/components/container";
 import { SpendingAlert } from "@/components/spending-alert";
 import { TransactionItem } from "@/components/transaction-item";
 import { authClient } from "@/lib/auth-client";
+import { useI18n } from "@/lib/i18n/i18n-provider";
 import { useColorScheme } from "@/lib/theme-provider";
 import { DEFAULT_AVATAR } from "./profile";
 
@@ -76,16 +77,18 @@ export default function Home() {
 	const { colorScheme } = useColorScheme();
 	const isDark = colorScheme === "dark";
 	const { data: session } = authClient.useSession();
-	const [period, setPeriod] = useState<"daily" | "monthly">("daily");
+	const { t } = useI18n();
+	const [period, setPeriod] = useState<"daily" | "monthly" | "yearly">("daily");
 
 	// Get actual user data from session
 	const userName = session?.user?.name || "User";
 	const userImage = session?.user?.image || DEFAULT_AVATAR;
 
-	// Mock budget data
+	// Mock budget data - updated with yearly
 	const budgetData = {
 		daily: { spent: 68, total: 100 },
 		monthly: { spent: 1200, total: 2000 },
+		yearly: { spent: 8500, total: 24000 },
 	};
 
 	const currentBudget = budgetData[period];
@@ -96,9 +99,9 @@ export default function Home() {
 	// Get greeting based on local time
 	const getGreeting = () => {
 		const hour = new Date().getHours();
-		if (hour < 12) return "Good Morning";
-		if (hour < 18) return "Good Afternoon";
-		return "Good Evening";
+		if (hour < 12) return t("home.goodMorning");
+		if (hour < 18) return t("home.goodAfternoon");
+		return t("home.goodEvening");
 	};
 
 	return (
@@ -157,10 +160,14 @@ export default function Home() {
 						<Text
 							className={`font-bold text-xl ${isDark ? "text-white" : "text-gray-900"}`}
 						>
-							Recent Activity
+							{t("home.recentActivity")}
 						</Text>
-						<TouchableOpacity>
-							<Text className="font-medium text-emerald-500">View All</Text>
+						<TouchableOpacity
+							onPress={() => router.push("/(app)/transactions")}
+						>
+							<Text className="font-medium text-emerald-500">
+								{t("home.viewAll")}
+							</Text>
 						</TouchableOpacity>
 					</View>
 

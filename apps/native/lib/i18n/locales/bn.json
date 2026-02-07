@@ -1,0 +1,104 @@
+{
+	"common": {
+		"appName": "scanPe",
+		"loading": "লোড হচ্ছে...",
+		"cancel": "বাতিল",
+		"save": "সংরক্ষণ",
+		"edit": "সম্পাদনা",
+		"delete": "মুছুন",
+		"back": "পেছনে",
+		"close": "বন্ধ",
+		"search": "খুঁজুন",
+		"done": "সম্পন্ন",
+		"error": "ত্রুটি"
+	},
+	"home": {
+		"goodMorning": "শুভ সকাল",
+		"goodAfternoon": "শুভ অপরাহ্ণ",
+		"goodEvening": "শুভ সন্ধ্যা",
+		"dailyLeft": "আজ বাকি",
+		"monthlyLeft": "মাসে বাকি",
+		"yearlyLeft": "বছরে বাকি",
+		"spent": "খরচ",
+		"daily": "দৈনিক",
+		"monthly": "মাসিক",
+		"yearly": "বার্ষিক",
+		"recentActivity": "সাম্প্রতিক কার্যকলাপ",
+		"viewAll": "সব দেখুন",
+		"gettingStarted": "শুরু করা",
+		"gettingStartedDesc": "অ্যাপে নেভিগেট করতে নীচের ট্যাবগুলি ব্যবহার করুন। আপনার অ্যাকাউন্ট পরিচালনা করতে প্রোফাইলে যান।",
+		"welcomeBack": "ফিরে আসায় স্বাগতম",
+		"totalSpent": "মোট খরচ",
+		"transactions": "লেনদেন"
+	},
+	"budget": {
+		"budgets": "বাজেট",
+		"dailyBudget": "দৈনিক বাজেট",
+		"monthlyBudget": "মাসিক বাজেট",
+		"yearlyBudget": "বার্ষিক বাজেট",
+		"strictMode": "কঠোর মোড",
+		"strictModeDesc": "বাজেট অতিক্রম হলে পেমেন্ট ব্লক করুন",
+		"remaining": "বাকি"
+	},
+	"profile": {
+		"profile": "প্রোফাইল",
+		"editProfile": "প্রোফাইল সম্পাদনা",
+		"account": "অ্যাকাউন্ট",
+		"preferences": "পছন্দসমূহ",
+		"paymentMethods": "পেমেন্ট পদ্ধতি",
+		"notifications": "নোটিফিকেশন",
+		"theme": "থিম",
+		"language": "ভাষা",
+		"aiSupport": "AI সাপোর্ট",
+		"signOut": "সাইন আউট",
+		"name": "নাম",
+		"email": "ইমেইল",
+		"light": "হালকা",
+		"dark": "গাঢ়",
+		"systemDefault": "সিস্টেম ডিফল্ট",
+		"alwaysLight": "সর্বদা হালকা মোড",
+		"alwaysDark": "সর্বদা গাঢ় মোড",
+		"followSystem": "সিস্টেম সেটিংস অনুসরণ করুন",
+		"chooseTheme": "থিম নির্বাচন"
+	},
+	"support": {
+		"helpSupport": "সাহায্য",
+		"aiAssistant": "AI সহকারী অনলাইন",
+		"askPlaceholder": "scanPe সম্পর্কে জিজ্ঞাসা করুন...",
+		"budgetHelp": "বাজেট সাহায্য",
+		"qrIssues": "QR সমস্যা",
+		"spendingAlerts": "খরচ সতর্কতা",
+		"welcomeMessage": "👋 হ্যালো! আমি আপনার scanPe সহকারী। আমি আপনাকে সাহায্য করতে পারি:\n\n• বাজেট ব্যবস্থাপনা এবং সীমা\n• QR কোড পেমেন্ট\n• খরচ সতর্কতা বোঝা\n• অ্যাপ বৈশিষ্ট্য এবং সেটিংস\n• সমস্যা সমাধান\n\nআপনি কী জানতে চান?",
+		"connectionError": "AI সাপোর্টের সাথে সংযোগ করা যাচ্ছে না। অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন এবং আবার চেষ্টা করুন।",
+		"serverError": "সার্ভারের সাথে সংযোগ করতে সমস্যা হচ্ছে। অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন এবং আবার চেষ্টা করুন।"
+	},
+	"transactions": {
+		"allTransactions": "সব লেনদেন",
+		"totalSpent": "মোট খরচ",
+		"searchPlaceholder": "লেনদেন খুঁজুন...",
+		"noTransactions": "কোনো লেনদেন পাওয়া যায়নি",
+		"today": "আজ",
+		"yesterday": "গতকাল"
+	},
+	"categories": {
+		"coffee": "কফি",
+		"groceries": "মুদি",
+		"transport": "পরিবহন",
+		"entertainment": "বিনোদন",
+		"shopping": "কেনাকাটা",
+		"food": "খাবার",
+		"utilities": "উপযোগিতা",
+		"travel": "ভ্রমণ",
+		"health": "স্বাস্থ্য"
+	},
+	"spendingAlert": {
+		"title": "খরচ সতর্কতা",
+		"message": "আপনি আপনার দৈনিক বাজেটের {{percentage}}% খরচ করেছেন। দিন শেষ করতে ধীরে যান!"
+	},
+	"language": {
+		"selectLanguage": "ভাষা নির্বাচন",
+		"english": "English",
+		"hindi": "हिंदी",
+		"bengali": "বাংলা"
+	}
+}

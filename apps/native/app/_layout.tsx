@@ -14,6 +14,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
 import { NAV_THEME } from "@/lib/constants";
+import { I18nProvider } from "@/lib/i18n/i18n-provider";
 import { ThemeProvider, useColorScheme } from "@/lib/theme-provider";
 
 const LIGHT_THEME: Theme = {
@@ -73,8 +74,10 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
 	return (
-		<ThemeProvider>
-			<RootLayoutNav />
-		</ThemeProvider>
+		<I18nProvider>
+			<ThemeProvider>
+				<RootLayoutNav />
+			</ThemeProvider>
+		</I18nProvider>
 	);
 }

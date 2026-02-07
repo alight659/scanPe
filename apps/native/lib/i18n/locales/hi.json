@@ -1,0 +1,104 @@
+{
+	"common": {
+		"appName": "scanPe",
+		"loading": "लोड हो रहा है...",
+		"cancel": "रद्द करें",
+		"save": "सहेजें",
+		"edit": "संपादित करें",
+		"delete": "हटाएं",
+		"back": "वापस",
+		"close": "बंद करें",
+		"search": "खोजें",
+		"done": "पूर्ण",
+		"error": "त्रुटि"
+	},
+	"home": {
+		"goodMorning": "सुप्रभात",
+		"goodAfternoon": "नमस्ते",
+		"goodEvening": "शुभ संध्या",
+		"dailyLeft": "आज बचा",
+		"monthlyLeft": "महीना बचा",
+		"yearlyLeft": "साल बचा",
+		"spent": "खर्च",
+		"daily": "रोज",
+		"monthly": "महीना",
+		"yearly": "साल",
+		"recentActivity": "हाल की गतिविधि",
+		"viewAll": "सभी देखें",
+		"gettingStarted": "शुरुआत",
+		"gettingStartedDesc": "ऐप में नेविगेट करने के लिए नीचे के टैब का उपयोग करें। अपना खाता प्रबंधित करने के लिए प्रोफाइल पर जाएं।",
+		"welcomeBack": "वापसी पर स्वागत",
+		"totalSpent": "कुल खर्च",
+		"transactions": "लेन-देन"
+	},
+	"budget": {
+		"budgets": "बजट",
+		"dailyBudget": "दैनिक बजट",
+		"monthlyBudget": "मासिक बजट",
+		"yearlyBudget": "वार्षिक बजट",
+		"strictMode": "सख्त मोड",
+		"strictModeDesc": "बजट पार होने पर भुगतान रोकें",
+		"remaining": "बचा"
+	},
+	"profile": {
+		"profile": "प्रोफाइल",
+		"editProfile": "प्रोफाइल संपादित करें",
+		"account": "खाता",
+		"preferences": "पसंद",
+		"paymentMethods": "भुगतान विधियां",
+		"notifications": "सूचनाएं",
+		"theme": "थीम",
+		"language": "भाषा",
+		"aiSupport": "AI सहायता",
+		"signOut": "साइन आउट",
+		"name": "नाम",
+		"email": "ईमेल",
+		"light": "हल्का",
+		"dark": "गहरा",
+		"systemDefault": "सिस्टम डिफ़ॉल्ट",
+		"alwaysLight": "हमेशा हल्का मोड",
+		"alwaysDark": "हमेशा गहरा मोड",
+		"followSystem": "सिस्टम सेटिंग्स का पालन करें",
+		"chooseTheme": "थीम चुनें"
+	},
+	"support": {
+		"helpSupport": "सहायता",
+		"aiAssistant": "AI सहायक ऑनलाइन",
+		"askPlaceholder": "scanPe के बारे में पूछें...",
+		"budgetHelp": "बजट सहायता",
+		"qrIssues": "QR समस्याएं",
+		"spendingAlerts": "खर्च अलर्ट",
+		"welcomeMessage": "👋 नमस्ते! मैं आपका scanPe सहायक हूं। मैं आपकी मदद कर सकता हूं:\n\n• बजट प्रबंधन और सीमाएं\n• QR कोड भुगतान\n• खर्च अलर्ट समझना\n• ऐप सुविधाएं और सेटिंग्स\n• समस्या निवारण\n\nआप क्या जानना चाहेंगे?",
+		"connectionError": "AI सहायता से कनेक्ट नहीं हो सका। कृपया अपना इंटरनेट कनेक्शन जांचें और पुनः प्रयास करें।",
+		"serverError": "मुझे सर्वर से कनेक्ट करने में समस्या हो रही है। कृपया अपना इंटरनेट कनेक्शन जांचें और पुनः प्रयास करें।"
+	},
+	"transactions": {
+		"allTransactions": "सभी लेन-देन",
+		"totalSpent": "कुल खर्च",
+		"searchPlaceholder": "लेन-देन खोजें...",
+		"noTransactions": "कोई लेन-देन नहीं मिला",
+		"today": "आज",
+		"yesterday": "कल"
+	},
+	"categories": {
+		"coffee": "कॉफी",
+		"groceries": "किराना",
+		"transport": "परिवहन",
+		"entertainment": "मनोरंजन",
+		"shopping": "खरीदारी",
+		"food": "भोजन",
+		"utilities": "उपयोगिताएं",
+		"travel": "यात्रा",
+		"health": "स्वास्थ्य"
+	},
+	"spendingAlert": {
+		"title": "खर्च अलर्ट",
+		"message": "आपने अपने दैनिक बजट का {{percentage}}% खर्च कर लिया है। दिन पूरा करने के लिए धीमे हो जाएं!"
+	},
+	"language": {
+		"selectLanguage": "भाषा चुनें",
+		"english": "English",
+		"hindi": "हिंदी",
+		"bengali": "বাংলা"
+	}
+}

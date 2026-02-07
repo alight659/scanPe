@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useI18n } from "@/lib/i18n/i18n-provider";
 import { useColorScheme } from "@/lib/theme-provider";
 
 const SERVER_URL =
@@ -29,6 +30,7 @@ interface ChatMessage {
 export default function SupportScreen() {
 	const { isDarkColorScheme } = useColorScheme();
 	const isDark = isDarkColorScheme;
+	const { t } = useI18n();
 	const flatListRef = useRef<FlatList<ChatMessage>>(null);
 	const [input, setInput] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -36,8 +38,7 @@ export default function SupportScreen() {
 		{
 			id: "welcome",
 			role: "assistant",
-			content:
-				"👋 Hi! I'm your scanPe support assistant. I can help you with:\n\n• Budget management and limits\n• QR code payments\n• Understanding spending alerts\n• App features and settings\n• Troubleshooting issues\n\nWhat would you like to know?",
+			content: t("support.welcomeMessage"),
 		},
 	]);
 
@@ -111,19 +112,16 @@ export default function SupportScreen() {
 			]);
 		} catch (error) {
 			console.error("Chat error:", error);
-			Alert.alert(
-				"Connection Error",
-				"Unable to connect to AI support. Please check your internet connection and try again.",
-				[{ text: "OK" }],
-			);
+			Alert.alert(t("common.error"), t("support.connectionError"), [
+				{ text: "OK" },
+			]);
 
 			setMessages((prev) => [
 				...prev,
 				{
 					id: Date.now().toString(),
 					role: "assistant",
-					content:
-						"Sorry, I'm having trouble connecting to the server. Please check your internet connection and try again.",
+					content: t("support.serverError"),
 				},
 			]);
 		} finally {
@@ -210,7 +208,7 @@ export default function SupportScreen() {
 							isDark ? "text-white" : "text-gray-900"
 						}`}
 					>
-						Help & Support
+						{t("support.helpSupport")}
 					</Text>
 					<View className="mt-1 flex-row items-center">
 						<View className="mr-2 h-2 w-2 rounded-full bg-emerald-500" />
@@ -219,7 +217,7 @@ export default function SupportScreen() {
 								isDark ? "text-gray-400" : "text-gray-500"
 							}`}
 						>
-							AI Assistant Online
+							{t("support.aiAssistant")}
 						</Text>
 					</View>
 				</View>
@@ -252,7 +250,7 @@ export default function SupportScreen() {
 						<TextInput
 							value={input}
 							onChangeText={setInput}
-							placeholder="Ask about scanPe..."
+							placeholder={t("support.askPlaceholder")}
 							placeholderTextColor={isDark ? "#6B7280" : "#9CA3AF"}
 							multiline
 							maxLength={500}
@@ -286,17 +284,17 @@ export default function SupportScreen() {
 					{/* Quick Actions */}
 					<View className="mt-3 flex-row">
 						<QuickActionButton
-							label="Budget Help"
+							label={t("support.budgetHelp")}
 							onPress={() => handleQuickAction("How do I set up my budget?")}
 							isDark={isDark}
 						/>
 						<QuickActionButton
-							label="QR Issues"
+							label={t("support.qrIssues")}
 							onPress={() => handleQuickAction("QR code won't scan")}
 							isDark={isDark}
 						/>
 						<QuickActionButton
-							label="Spending Alerts"
+							label={t("support.spendingAlerts")}
 							onPress={() => handleQuickAction("What are spending alerts?")}
 							isDark={isDark}
 						/>

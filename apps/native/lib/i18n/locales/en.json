@@ -1,0 +1,104 @@
+{
+	"common": {
+		"appName": "scanPe",
+		"loading": "Loading...",
+		"cancel": "Cancel",
+		"save": "Save",
+		"edit": "Edit",
+		"delete": "Delete",
+		"back": "Back",
+		"close": "Close",
+		"search": "Search",
+		"done": "Done",
+		"error": "Error"
+	},
+	"home": {
+		"goodMorning": "Good Morning",
+		"goodAfternoon": "Good Afternoon",
+		"goodEvening": "Good Evening",
+		"dailyLeft": "DAILY LEFT",
+		"monthlyLeft": "MONTHLY LEFT",
+		"yearlyLeft": "YEARLY LEFT",
+		"spent": "spent",
+		"daily": "Daily",
+		"monthly": "Monthly",
+		"yearly": "Yearly",
+		"recentActivity": "Recent Activity",
+		"viewAll": "View All",
+		"gettingStarted": "Getting Started",
+		"gettingStartedDesc": "Use the tabs below to navigate through the app. Visit your Profile to manage your account.",
+		"welcomeBack": "Welcome back",
+		"totalSpent": "Total Spent",
+		"transactions": "transactions"
+	},
+	"budget": {
+		"budgets": "Budgets",
+		"dailyBudget": "Daily Budget",
+		"monthlyBudget": "Monthly Budget",
+		"yearlyBudget": "Yearly Budget",
+		"strictMode": "Strict Mode",
+		"strictModeDesc": "Prevent payments when budget is exceeded",
+		"remaining": "remaining"
+	},
+	"profile": {
+		"profile": "Profile",
+		"editProfile": "Edit Profile",
+		"account": "Account",
+		"preferences": "Preferences",
+		"paymentMethods": "Payment Methods",
+		"notifications": "Notifications",
+		"theme": "Theme",
+		"language": "Language",
+		"aiSupport": "AI Support",
+		"signOut": "Sign Out",
+		"name": "Name",
+		"email": "Email",
+		"light": "Light",
+		"dark": "Dark",
+		"systemDefault": "System Default",
+		"alwaysLight": "Always use light mode",
+		"alwaysDark": "Always use dark mode",
+		"followSystem": "Follow system settings",
+		"chooseTheme": "Choose Theme"
+	},
+	"support": {
+		"helpSupport": "Help & Support",
+		"aiAssistant": "AI Assistant Online",
+		"askPlaceholder": "Ask about scanPe...",
+		"budgetHelp": "Budget Help",
+		"qrIssues": "QR Issues",
+		"spendingAlerts": "Spending Alerts",
+		"welcomeMessage": "👋 Hi! I'm your scanPe support assistant. I can help you with:\n\n• Budget management and limits\n• QR code payments\n• Understanding spending alerts\n• App features and settings\n• Troubleshooting issues\n\nWhat would you like to know?",
+		"connectionError": "Unable to connect to AI support. Please check your internet connection and try again.",
+		"serverError": "Sorry, I'm having trouble connecting to the server. Please check your internet connection and try again."
+	},
+	"transactions": {
+		"allTransactions": "All Transactions",
+		"totalSpent": "Total Spent",
+		"searchPlaceholder": "Search transactions...",
+		"noTransactions": "No transactions found",
+		"today": "Today",
+		"yesterday": "Yesterday"
+	},
+	"categories": {
+		"coffee": "Coffee",
+		"groceries": "Groceries",
+		"transport": "Transport",
+		"entertainment": "Entertainment",
+		"shopping": "Shopping",
+		"food": "Food",
+		"utilities": "Utilities",
+		"travel": "Travel",
+		"health": "Health"
+	},
+	"spendingAlert": {
+		"title": "Spending Alert",
+		"message": "You've used {{percentage}}% of your daily budget. Slow down to make it through the day!"
+	},
+	"language": {
+		"selectLanguage": "Select Language",
+		"english": "English",
+		"hindi": "हिंदी",
+		"bengali": "বাংলা"
+	}
+}
