@@ -1,7 +1,6 @@
-import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
 	FlatList,
 	ScrollView,
@@ -14,6 +13,7 @@ import { BudgetChart } from "@/components/budget-chart";
 import { Container } from "@/components/container";
 import { SpendingAlert } from "@/components/spending-alert";
 import { TransactionItem } from "@/components/transaction-item";
+import { useBudgets } from "@/lib/api/budgets";
 import { authClient } from "@/lib/auth-client";
 import { useI18n } from "@/lib/i18n/i18n-provider";
 import { useColorScheme } from "@/lib/theme-provider";
@@ -84,17 +84,23 @@ export default function Home() {
 	const userName = session?.user?.name || "User";
 	const userImage = session?.user?.image || DEFAULT_AVATAR;
 
-	// Mock budget data - updated with yearly
-	const budgetData = {
-		daily: { spent: 68, total: 100 },
-		monthly: { spent: 1200, total: 2000 },
-		yearly: { spent: 8500, total: 24000 },
-	};
+	// Fetch real budget data from API
+	const { data: budgets } = useBudgets();
 
-	const currentBudget = budgetData[period];
-	const percentage = Math.round(
-		(currentBudget.spent / currentBudget.total) * 100,
-	);
+	// Calculate totals for the selected period across all categories
+	const periodBudgets = budgets?.filter((b) => b.period === period) || [];
+	const totalSpent = periodBudgets.reduce((sum, b) => sum + b.spent, 0);
+	const totalLimit = periodBudgets.reduce((sum, b) => sum + b.limit, 0);
+
+	// Get current budget based on selected period, fallback to defaults if no budget exists
+	const currentBudget =
+		totalLimit > 0
+			? { spent: totalSpent, total: totalLimit }
+			: { spent: 0, total: 100 };
+	const percentage =
+		currentBudget.total > 0
+			? Math.round((currentBudget.spent / currentBudget.total) * 100)
+			: 0;
 
 	// Get greeting based on local time
 	const getGreeting = () => {

@@ -6,6 +6,7 @@ import {
 	ThemeProvider as NavigationThemeProvider,
 	type Theme,
 } from "@react-navigation/native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useRef } from "react";
@@ -16,6 +17,8 @@ import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
 import { NAV_THEME } from "@/lib/constants";
 import { I18nProvider } from "@/lib/i18n/i18n-provider";
 import { ThemeProvider, useColorScheme } from "@/lib/theme-provider";
+
+const queryClient = new QueryClient();
 
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,
@@ -74,10 +77,12 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
 	return (
-		<I18nProvider>
-			<ThemeProvider>
-				<RootLayoutNav />
-			</ThemeProvider>
-		</I18nProvider>
+		<QueryClientProvider client={queryClient}>
+			<I18nProvider>
+				<ThemeProvider>
+					<RootLayoutNav />
+				</ThemeProvider>
+			</I18nProvider>
+		</QueryClientProvider>
 	);
 }

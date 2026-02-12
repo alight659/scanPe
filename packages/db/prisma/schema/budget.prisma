@@ -1,0 +1,55 @@
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  icon        String    @default("folder")
+  color       String    @default("#10B981")
+  userId      String?   // null = default/seeded category
+  isDefault   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  budgets     Budget[]
+
+  @@index([userId])
+  @@map("category")
+}
+
+enum Period {
+  daily
+  monthly
+  yearly
+}
+
+model Budget {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId  String
+  category    Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  limit       Decimal       @db.Decimal(10, 2)
+  period      Period        @default(monthly)
+  strictMode  Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  transactions Transaction[]
+
+  @@index([userId])
+  @@index([categoryId])
+  @@unique([userId, categoryId, period])
+  @@map("budget")
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  budgetId    String?
+  budget      Budget?  @relation(fields: [budgetId], references: [id], onDelete: SetNull)
+  amount      Decimal  @db.Decimal(10, 2)
+  merchant    String
+  description String?
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([budgetId])
+  @@map("transaction")
+}
