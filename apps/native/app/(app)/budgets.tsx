@@ -11,6 +11,7 @@ import {
 
 import { AddBudgetModal } from "@/components/add-budget-modal";
 import { Container } from "@/components/container";
+import { DeleteConfirmationModal } from "@/components/delete-confirmation-modal";
 import {
 	useBudgets,
 	useCreateBudget,
@@ -30,6 +31,10 @@ export default function BudgetsScreen() {
 	const [editingBudget, setEditingBudget] = useState<Budget | undefined>();
 	const [selectedPeriod, setSelectedPeriod] = useState<Period | "all">("all");
 
+	const [menuVisible, setMenuVisible] = useState<string | null>(null);
+	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+	const [budgetToDelete, setBudgetToDelete] = useState<Budget | null>(null);
+
 	const { data: budgets, isLoading, error } = useBudgets();
 	const createBudget = useCreateBudget();
 	const updateBudget = useUpdateBudget();
@@ -41,19 +46,35 @@ export default function BudgetsScreen() {
 	};
 
 	const handleEditPress = (budget: Budget) => {
+		setMenuVisible(null);
 		setEditingBudget(budget);
 		setShowModal(true);
 	};
 
 	const handleDeletePress = (budget: Budget) => {
-		Alert.alert(t("budget.deleteBudget"), t("budget.confirmDelete"), [
-			{ text: t("budget.cancel"), style: "cancel" },
-			{
-				text: t("budget.delete"),
-				style: "destructive",
-				onPress: () => deleteBudget.mutate(budget.id),
-			},
-		]);
+		setMenuVisible(null);
+		setBudgetToDelete(budget);
+		setDeleteModalVisible(true);
+	};
+
+	const handleConfirmDelete = () => {
+		if (budgetToDelete) {
+			deleteBudget.mutate(budgetToDelete.id, {
+				onSuccess: () => {
+					setDeleteModalVisible(false);
+					setBudgetToDelete(null);
+				},
+				onError: (err) => {
+					Alert.alert(t("common.error"), err.message);
+					setDeleteModalVisible(false);
+					setBudgetToDelete(null);
+				},
+			});
+		}
+	};
+
+	const handleMenuPress = (budgetId: string) => {
+		setMenuVisible(menuVisible === budgetId ? null : budgetId);
 	};
 
 	const handleSubmit = (data: {
@@ -271,92 +292,146 @@ export default function BudgetsScreen() {
 									);
 									const remaining = budget.limit - budget.spent;
 									const progressColor = getProgressColor(percentage);
+									const isMenuOpen = menuVisible === budget.id;
 
 									return (
-										<TouchableOpacity
-											key={budget.id}
-											onPress={() => handleEditPress(budget)}
-											onLongPress={() => handleDeletePress(budget)}
-											activeOpacity={0.8}
-											className={`mb-3 rounded-2xl border p-5 ${
-												isDark
-													? "border-gray-800 bg-gray-900"
-													: "border-gray-100 bg-white"
-											}`}
-											style={
-												budget.strictMode
-													? {
-															borderLeftWidth: 4,
-															borderLeftColor: "#EF4444",
-														}
-													: {}
-											}
-										>
-											<View className="flex-row items-center">
-												{/* Category Icon */}
-												<View
-													className="mr-4 rounded-full p-3"
-													style={{
-														backgroundColor: `${budget.category.color}20`,
-													}}
-												>
-													<Feather
-														name={budget.category.icon as any}
-														size={24}
-														color={budget.category.color}
-													/>
-												</View>
-
-												{/* Budget Info */}
-												<View className="flex-1">
-													<View className="flex-row items-center justify-between">
-														<Text
-															className={`font-bold text-lg ${
-																isDark ? "text-white" : "text-gray-900"
-															}`}
-														>
-															{budget.category.name}
-														</Text>
-														{budget.strictMode && (
-															<View className="rounded-full bg-red-500/20 px-2 py-1">
-																<Text className="font-medium text-red-500 text-xs">
-																	{t("budget.strict")}
-																</Text>
-															</View>
-														)}
-													</View>
-
-													{/* Amount */}
-													<Text
-														className={`mt-1 font-bold text-2xl ${
-															isDark ? "text-white" : "text-gray-900"
-														}`}
+										<View key={budget.id} className="mb-3">
+											<TouchableOpacity
+												onPress={() => handleEditPress(budget)}
+												activeOpacity={0.8}
+												className={`rounded-2xl border p-5 ${
+													isDark
+														? "border-gray-800 bg-gray-900"
+														: "border-gray-100 bg-white"
+												}`}
+												style={
+													budget.strictMode
+														? {
+																borderLeftWidth: 4,
+																borderLeftColor: "#EF4444",
+															}
+														: {}
+												}
+											>
+												<View className="flex-row items-center">
+													{/* Category Icon */}
+													<View
+														className="mr-4 rounded-full p-3"
+														style={{
+															backgroundColor: `${budget.category.color}20`,
+														}}
 													>
-														${budget.limit.toFixed(2)}
-													</Text>
-
-													{/* Progress Bar */}
-													<View className="mt-2 h-2 rounded-full bg-gray-200 dark:bg-gray-700">
-														<View
-															className={`h-2 rounded-full ${progressColor}`}
-															style={{ width: `${percentage}%` }}
+														<Feather
+															name={budget.category.icon as any}
+															size={24}
+															color={budget.category.color}
 														/>
 													</View>
 
-													{/* Stats */}
-													<Text
-														className={`mt-1 text-sm ${
-															isDark ? "text-gray-400" : "text-gray-500"
+													{/* Budget Info */}
+													<View className="flex-1">
+														<View className="flex-row items-center justify-between">
+															<Text
+																className={`font-bold text-lg ${
+																	isDark ? "text-white" : "text-gray-900"
+																}`}
+															>
+																{budget.category.name}
+															</Text>
+															{budget.strictMode && (
+																<View className="rounded-full bg-red-500/20 px-2 py-1">
+																	<Text className="font-medium text-red-500 text-xs">
+																		{t("budget.strict")}
+																	</Text>
+																</View>
+															)}
+														</View>
+
+														{/* Amount */}
+														<Text
+															className={`mt-1 font-bold text-2xl ${
+																isDark ? "text-white" : "text-gray-900"
+															}`}
+														>
+															${budget.limit.toFixed(2)}
+														</Text>
+
+														{/* Progress Bar */}
+														<View className="mt-2 h-2 rounded-full bg-gray-200 dark:bg-gray-700">
+															<View
+																className={`h-2 rounded-full ${progressColor}`}
+																style={{ width: `${percentage}%` }}
+															/>
+														</View>
+
+														{/* Stats */}
+														<Text
+															className={`mt-1 text-sm ${
+																isDark ? "text-gray-400" : "text-gray-500"
+															}`}
+														>
+															{t("budget.spendingProgress", {
+																spent: `$${budget.spent.toFixed(2)}`,
+																remaining: `$${remaining.toFixed(2)}`,
+															})}
+														</Text>
+													</View>
+
+													{/* Three-dot Menu Button */}
+													<TouchableOpacity
+														onPress={() => handleMenuPress(budget.id)}
+														className="ml-2 rounded-full p-2"
+													>
+														<Feather
+															name="more-vertical"
+															size={20}
+															color={isDark ? "#9CA3AF" : "#6B7280"}
+														/>
+													</TouchableOpacity>
+												</View>
+											</TouchableOpacity>
+
+											{isMenuOpen && (
+												<View
+													className={`absolute top-2 right-2 z-10 rounded-xl border shadow-lg ${
+														isDark
+															? "border-gray-700 bg-gray-800"
+															: "border-gray-200 bg-white"
+													}`}
+													style={{
+														shadowColor: "#000",
+														shadowOffset: { width: 0, height: 2 },
+														shadowOpacity: 0.15,
+														shadowRadius: 8,
+														elevation: 5,
+													}}
+												>
+													<TouchableOpacity
+														onPress={() => handleEditPress(budget)}
+														className={`flex-row items-center px-4 py-3 ${
+															isDark
+																? "border-gray-700 border-b"
+																: "border-gray-100 border-b"
 														}`}
 													>
-														{t("budget.spendingProgress", {
-															spent: `$${budget.spent.toFixed(2)}`,
-															remaining: `$${remaining.toFixed(2)}`,
-														})}
-													</Text>
+														<Feather name="edit-2" size={18} color="#10B981" />
+														<Text className="ml-2 font-medium text-emerald-500">
+															{t("common.edit")}
+														</Text>
+													</TouchableOpacity>
+
+													<TouchableOpacity
+														onPress={() => handleDeletePress(budget)}
+														className="flex-row items-center px-4 py-3"
+													>
+														<Feather name="trash-2" size={18} color="#EF4444" />
+														<Text className="ml-2 font-medium text-red-500">
+															{t("common.delete")}
+														</Text>
+													</TouchableOpacity>
 												</View>
-											</View>
-										</TouchableOpacity>
+											)}
+										</View>
 									);
 								})}
 							</View>
@@ -364,7 +439,6 @@ export default function BudgetsScreen() {
 				</View>
 			</ScrollView>
 
-			{/* Add/Edit Budget Modal */}
 			<AddBudgetModal
 				visible={showModal}
 				onClose={() => {
@@ -374,6 +448,19 @@ export default function BudgetsScreen() {
 				onSubmit={handleSubmit}
 				existingBudget={editingBudget}
 				isLoading={createBudget.isPending || updateBudget.isPending}
+			/>
+
+			<DeleteConfirmationModal
+				visible={deleteModalVisible}
+				title={t("budget.deleteBudget")}
+				message={t("budget.confirmDelete")}
+				isLoading={deleteBudget.isPending}
+				onConfirm={handleConfirmDelete}
+				onCancel={() => {
+					setDeleteModalVisible(false);
+					setBudgetToDelete(null);
+				}}
+				isDark={isDark}
 			/>
 		</Container>
 	);

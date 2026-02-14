@@ -55,13 +55,15 @@
 		"yearly": "Yearly",
 		"all": "All",
 		"spendingProgress": "{{spent}} spent • {{remaining}} remaining",
-		"confirmDelete": "Are you sure you want to delete this budget?",
+		"confirmDelete": "Are you sure you want to delete this budget? This action cannot be undone.",
 		"delete": "Delete",
 		"cancel": "Cancel",
 		"addCategory": "Add Category",
 		"categoryNamePlaceholder": "Enter category name",
 		"selectColor": "Select Color",
-		"yourCategories": "Your Categories"
+		"yourCategories": "Your Categories",
+		"deleteCategory": "Delete Category",
+		"confirmDeleteCategory": "Are you sure you want to delete this category? This will also remove it from any budgets using it."
 	},
 	"profile": {
 		"profile": "Profile",

@@ -1,6 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
+	Alert,
 	Modal,
 	ScrollView,
 	Text,
@@ -9,6 +10,7 @@ import {
 	View,
 } from "react-native";
 
+import { DeleteConfirmationModal } from "@/components/delete-confirmation-modal";
 import {
 	useCategories,
 	useCreateCategory,
@@ -203,6 +205,10 @@ function CategoryManagerModal({
 	const [showAddForm, setShowAddForm] = useState(false);
 	const [newCategoryName, setNewCategoryName] = useState("");
 	const [selectedColor, setSelectedColor] = useState(CATEGORY_COLORS[0]);
+	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+	const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(
+		null,
+	);
 
 	const userCategories = categories?.filter((c) => !c.isDefault) || [];
 
@@ -218,8 +224,32 @@ function CategoryManagerModal({
 						setNewCategoryName("");
 						setShowAddForm(false);
 					},
+					onError: (err) => {
+						Alert.alert(t("common.error"), err.message);
+					},
 				},
 			);
+		}
+	};
+
+	const handleDeletePress = (category: Category) => {
+		setCategoryToDelete(category);
+		setDeleteModalVisible(true);
+	};
+
+	const handleConfirmDelete = () => {
+		if (categoryToDelete) {
+			deleteCategory.mutate(categoryToDelete.id, {
+				onSuccess: () => {
+					setDeleteModalVisible(false);
+					setCategoryToDelete(null);
+				},
+				onError: (err) => {
+					Alert.alert(t("common.error"), err.message);
+					setDeleteModalVisible(false);
+					setCategoryToDelete(null);
+				},
+			});
 		}
 	};
 
@@ -290,7 +320,7 @@ function CategoryManagerModal({
 											</Text>
 										</View>
 										<TouchableOpacity
-											onPress={() => deleteCategory.mutate(category.id)}
+											onPress={() => handleDeletePress(category)}
 											disabled={deleteCategory.isPending}
 										>
 											<Feather name="trash-2" size={20} color="#EF4444" />
@@ -412,6 +442,19 @@ function CategoryManagerModal({
 					<View className="h-6" />
 				</View>
 			</View>
+
+			<DeleteConfirmationModal
+				visible={deleteModalVisible}
+				title={t("budget.deleteCategory")}
+				message={t("budget.confirmDeleteCategory")}
+				isLoading={deleteCategory.isPending}
+				onConfirm={handleConfirmDelete}
+				onCancel={() => {
+					setDeleteModalVisible(false);
+					setCategoryToDelete(null);
+				}}
+				isDark={isDark}
+			/>
 		</Modal>
 	);
 }
