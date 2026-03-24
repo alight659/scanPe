@@ -2,7 +2,7 @@ import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { google } from "@ai-sdk/google";
 import { auth } from "@scanPe/auth";
 import prisma from "@scanPe/db";
-import { env } from "@scanPe/env/server";
+
 import { generateText, wrapLanguageModel } from "ai";
 import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
@@ -13,10 +13,9 @@ const app = express();
 
 app.use(
 	cors({
-		origin: env.CORS_ORIGIN,
-		methods: ["GET", "POST", "OPTIONS"],
+		origin: "*",
+		methods: ["GET", "POST", "OPTIONS", "DELETE", "PATCH"],
 		allowedHeaders: ["Content-Type", "Authorization"],
-		credentials: true,
 	}),
 );
 
