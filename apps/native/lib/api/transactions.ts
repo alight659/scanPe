@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
 	CreateTransactionInput,
 	Transaction,
+	UpdateTransactionInput,
 } from "../../types/transaction";
 import { authClient } from "../auth-client";
 
@@ -73,6 +74,37 @@ async function createTransaction(
 	return response.json();
 }
 
+async function updateTransaction(
+	id: string,
+	input: UpdateTransactionInput,
+): Promise<Transaction> {
+	const token = await getAuthToken();
+	if (!token) {
+		throw new Error("Not authenticated");
+	}
+
+	const response = await fetch(`${API_URL}/transactions/${id}`, {
+		method: "PATCH",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+		body: JSON.stringify(input),
+	});
+
+	if (!response.ok) {
+		if (response.status === 401) {
+			throw new Error("Unauthorized. Please sign in again.");
+		}
+		const error = await response
+			.json()
+			.catch(() => ({ error: "Unknown error" }));
+		throw new Error(error.error || "Failed to update transaction");
+	}
+
+	return response.json();
+}
+
 async function deleteTransaction(id: string): Promise<void> {
 	const token = await getAuthToken();
 	if (!token) {
@@ -117,6 +149,24 @@ export function useCreateTransaction() {
 
 	return useMutation({
 		mutationFn: createTransaction,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["transactions"] });
+			queryClient.invalidateQueries({ queryKey: ["budgets"] });
+		},
+	});
+}
+
+export function useUpdateTransaction() {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({
+			id,
+			input,
+		}: {
+			id: string;
+			input: UpdateTransactionInput;
+		}) => updateTransaction(id, input),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["transactions"] });
 			queryClient.invalidateQueries({ queryKey: ["budgets"] });

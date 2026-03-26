@@ -23,9 +23,11 @@ import {
 	useCreateTransaction,
 	useDeleteTransaction,
 	useTransactions,
+	useUpdateTransaction,
 } from "@/lib/api/transactions";
 import { useI18n } from "@/lib/i18n/i18n-provider";
 import { useColorScheme } from "@/lib/theme-provider";
+import type { Transaction } from "@/types/transaction";
 
 export default function TransactionsScreen() {
 	const { colorScheme } = useColorScheme();
@@ -33,6 +35,8 @@ export default function TransactionsScreen() {
 	const { t } = useI18n();
 	const [searchQuery, setSearchQuery] = useState("");
 	const [showAddModal, setShowAddModal] = useState(false);
+	const [editingTransaction, setEditingTransaction] =
+		useState<Transaction | null>(null);
 	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 	const [transactionToDelete, setTransactionToDelete] = useState<string | null>(
 		null,
@@ -40,6 +44,7 @@ export default function TransactionsScreen() {
 
 	const { data: transactions, isLoading, error } = useTransactions();
 	const createTransaction = useCreateTransaction();
+	const updateTransaction = useUpdateTransaction();
 	const deleteTransaction = useDeleteTransaction();
 
 	// Calculate totals
@@ -91,6 +96,33 @@ export default function TransactionsScreen() {
 				Alert.alert(t("common.error"), err.message);
 			},
 		});
+	};
+
+	const handleEditPress = (transaction: Transaction) => {
+		setEditingTransaction(transaction);
+		setShowAddModal(true);
+	};
+
+	const handleUpdateTransaction = (data: {
+		budgetId: string;
+		amount: number;
+		merchant: string;
+		description?: string;
+	}) => {
+		if (editingTransaction) {
+			updateTransaction.mutate(
+				{ id: editingTransaction.id, input: data },
+				{
+					onSuccess: () => {
+						setShowAddModal(false);
+						setEditingTransaction(null);
+					},
+					onError: (err) => {
+						Alert.alert(t("common.error"), err.message);
+					},
+				},
+			);
+		}
 	};
 
 	const handleDeletePress = (id: string) => {
@@ -257,6 +289,7 @@ export default function TransactionsScreen() {
 										key={transaction.id}
 										transaction={transaction}
 										isDark={isDark}
+										onEdit={handleEditPress}
 										onDelete={handleDeletePress}
 									/>
 								))}
@@ -298,12 +331,18 @@ export default function TransactionsScreen() {
 				<Feather name="plus" size={28} color="#FFFFFF" />
 			</TouchableOpacity>
 
-			{/* Add Transaction Modal */}
+			{/* Add/Edit Transaction Modal */}
 			<AddTransactionModal
 				visible={showAddModal}
-				onClose={() => setShowAddModal(false)}
-				onSubmit={handleCreateTransaction}
-				isLoading={createTransaction.isPending}
+				onClose={() => {
+					setShowAddModal(false);
+					setEditingTransaction(null);
+				}}
+				onSubmit={
+					editingTransaction ? handleUpdateTransaction : handleCreateTransaction
+				}
+				existingTransaction={editingTransaction || undefined}
+				isLoading={createTransaction.isPending || updateTransaction.isPending}
 			/>
 
 			{/* Delete Confirmation Modal */}

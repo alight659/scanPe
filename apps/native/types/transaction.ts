@@ -26,3 +26,10 @@ export interface CreateTransactionInput {
 	merchant: string;
 	description?: string;
 }
+
+export interface UpdateTransactionInput {
+	budgetId?: string;
+	amount?: number;
+	merchant?: string;
+	description?: string;
+}

@@ -89,7 +89,9 @@
 		"noBudgetsAvailable": "কোনো বাজেট নেই। প্রথমে একটি বাজেট তৈরি করুন।",
 		"createTransaction": "লেনদেন যোগ করুন",
 		"deleteTransaction": "লেনদেন মুছুন",
-		"confirmDelete": "আপনি কি এই লেনদেন মুছতে চান?"
+		"confirmDelete": "আপনি কি এই লেনদেন মুছতে চান?",
+		"editTransaction": "লেনদেন সম্পাদনা",
+		"updateTransaction": "লেনদেন আপডেট"
 	},
 	"categories": {
 		"coffee": "কফি",

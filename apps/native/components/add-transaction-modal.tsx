@@ -14,6 +14,8 @@ import { useI18n } from "@/lib/i18n/i18n-provider";
 import { useColorScheme } from "@/lib/theme-provider";
 import type { Budget } from "@/types/budget";
 
+import type { Transaction } from "@/types/transaction";
+
 interface AddTransactionModalProps {
 	visible: boolean;
 	onClose: () => void;
@@ -23,6 +25,7 @@ interface AddTransactionModalProps {
 		merchant: string;
 		description?: string;
 	}) => void;
+	existingTransaction?: Transaction;
 	isLoading?: boolean;
 }
 
@@ -30,6 +33,7 @@ export function AddTransactionModal({
 	visible,
 	onClose,
 	onSubmit,
+	existingTransaction,
 	isLoading = false,
 }: AddTransactionModalProps) {
 	const { colorScheme } = useColorScheme();
@@ -46,13 +50,24 @@ export function AddTransactionModal({
 
 	useEffect(() => {
 		if (visible) {
-			setSelectedBudget(null);
-			setMerchant("");
-			setAmount("");
-			setDescription("");
+			if (existingTransaction) {
+				// Find the matching budget from the list
+				const matchingBudget = budgets?.find(
+					(b) => b.id === existingTransaction.budgetId,
+				);
+				setSelectedBudget(matchingBudget || null);
+				setMerchant(existingTransaction.merchant);
+				setAmount(existingTransaction.amount.toString());
+				setDescription(existingTransaction.description || "");
+			} else {
+				setSelectedBudget(null);
+				setMerchant("");
+				setAmount("");
+				setDescription("");
+			}
 			setShowBudgetDropdown(false);
 		}
-	}, [visible]);
+	}, [visible, existingTransaction, budgets]);
 
 	const handleSubmit = () => {
 		const amountNum = Number.parseFloat(amount);
@@ -68,6 +83,8 @@ export function AddTransactionModal({
 
 	const canSubmit =
 		selectedBudget && merchant.trim() && Number.parseFloat(amount) > 0;
+
+	const isEditing = !!existingTransaction;
 
 	return (
 		<Modal
@@ -85,7 +102,9 @@ export function AddTransactionModal({
 						<Text
 							className={`font-bold text-xl ${isDark ? "text-white" : "text-gray-900"}`}
 						>
-							{t("transactions.addTransaction")}
+							{isEditing
+								? t("transactions.editTransaction")
+								: t("transactions.addTransaction")}
 						</Text>
 						<TouchableOpacity onPress={onClose} disabled={isLoading}>
 							<Feather
@@ -346,7 +365,9 @@ export function AddTransactionModal({
 							<Text className="text-center font-bold text-lg text-white">
 								{isLoading
 									? t("common.loading")
-									: t("transactions.createTransaction")}
+									: isEditing
+										? t("transactions.updateTransaction")
+										: t("transactions.createTransaction")}
 							</Text>
 						</TouchableOpacity>
 

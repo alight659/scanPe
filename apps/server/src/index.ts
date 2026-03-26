@@ -614,6 +614,132 @@ app.post("/transactions", authMiddleware, async (req, res) => {
 	}
 });
 
+// Update a transaction
+const updateTransactionSchema = z.object({
+	budgetId: z.string().optional(),
+	amount: z.number().positive().optional(),
+	merchant: z.string().min(1).max(100).optional(),
+	description: z.string().max(255).optional(),
+});
+
+app.patch("/transactions/:id", authMiddleware, async (req, res) => {
+	try {
+		const user = (req as any).user;
+		const { id } = req.params;
+		const result = updateTransactionSchema.safeParse(req.body);
+
+		if (!result.success) {
+			return res.status(400).json({
+				error: "Invalid input",
+				details: result.error.issues,
+			});
+		}
+
+		// Verify transaction belongs to user
+		const existingTransaction = await prisma.transaction.findFirst({
+			where: { id, userId: user.id },
+		});
+
+		if (!existingTransaction) {
+			return res.status(404).json({ error: "Transaction not found" });
+		}
+
+		const { budgetId, amount, merchant, description } = result.data;
+
+		// If budgetId is changing, verify new budget belongs to user
+		if (budgetId && budgetId !== existingTransaction.budgetId) {
+			const budget = await prisma.budget.findFirst({
+				where: { id: budgetId, userId: user.id },
+			});
+
+			if (!budget) {
+				return res.status(404).json({ error: "Budget not found" });
+			}
+
+			// Check strict mode on new budget
+			if (budget.strictMode) {
+				const otherTransactions = await prisma.transaction.findMany({
+					where: { budgetId, NOT: { id } },
+				});
+				const currentSpent = otherTransactions.reduce(
+					(sum: number, t: any) => sum + Number(t.amount),
+					0,
+				);
+				const newAmount = amount ?? Number(existingTransaction.amount);
+				if (currentSpent + newAmount > Number(budget.limit)) {
+					return res.status(400).json({
+						error:
+							"Strict mode is enabled. This transaction would exceed your budget limit.",
+					});
+				}
+			}
+		} else if (amount) {
+			// Amount changed but budget stayed the same — check strict mode
+			const targetBudgetId = existingTransaction.budgetId!;
+			const budget = await prisma.budget.findFirst({
+				where: { id: targetBudgetId, userId: user.id },
+			});
+
+			if (budget?.strictMode) {
+				const otherTransactions = await prisma.transaction.findMany({
+					where: { budgetId: targetBudgetId, NOT: { id } },
+				});
+				const currentSpent = otherTransactions.reduce(
+					(sum: number, t: any) => sum + Number(t.amount),
+					0,
+				);
+				if (currentSpent + amount > Number(budget.limit)) {
+					return res.status(400).json({
+						error:
+							"Strict mode is enabled. This transaction would exceed your budget limit.",
+					});
+				}
+			}
+		}
+
+		const updateData: any = {};
+		if (budgetId !== undefined) updateData.budgetId = budgetId;
+		if (amount !== undefined) updateData.amount = amount;
+		if (merchant !== undefined) updateData.merchant = merchant;
+		if (description !== undefined) updateData.description = description || null;
+
+		const updated = await prisma.transaction.update({
+			where: { id },
+			data: updateData,
+			include: {
+				budget: {
+					include: { category: true },
+				},
+			},
+		});
+
+		const transaction = updated as any;
+
+		res.json({
+			id: transaction.id,
+			userId: transaction.userId,
+			budgetId: transaction.budgetId,
+			amount: Number(transaction.amount),
+			merchant: transaction.merchant,
+			description: transaction.description,
+			createdAt: transaction.createdAt,
+			budget: transaction.budget
+				? {
+						id: transaction.budget.id,
+						category: {
+							name: transaction.budget.category.name,
+							icon: transaction.budget.category.icon,
+							color: transaction.budget.category.color,
+						},
+					}
+				: null,
+		});
+	} catch (error) {
+		console.error("[Transactions] Error updating transaction:", error);
+		res.status(500).json({ error: "Failed to update transaction" });
+	}
+});
+
 // Delete a transaction
 app.delete("/transactions/:id", authMiddleware, async (req, res) => {
 	try {

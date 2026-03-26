@@ -89,7 +89,9 @@
 		"noBudgetsAvailable": "कोई बजट उपलब्ध नहीं। पहले बजट बनाएं।",
 		"createTransaction": "लेन-देन जोड़ें",
 		"deleteTransaction": "लेन-देन हटाएं",
-		"confirmDelete": "क्या आप वाकई इस लेन-देन को हटाना चाहते हैं?"
+		"confirmDelete": "क्या आप वाकई इस लेन-देन को हटाना चाहते हैं?",
+		"editTransaction": "लेन-देन संपादित करें",
+		"updateTransaction": "लेन-देन अपडेट करें"
 	},
 	"categories": {
 		"coffee": "कॉफी",

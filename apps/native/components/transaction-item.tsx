@@ -7,6 +7,7 @@ import type { Transaction } from "@/types/transaction";
 interface TransactionItemProps {
 	transaction: Transaction;
 	isDark: boolean;
+	onEdit?: (transaction: Transaction) => void;
 	onDelete?: (id: string) => void;
 }
 
@@ -73,6 +74,7 @@ export function formatDateHeader(
 export function TransactionItem({
 	transaction,
 	isDark,
+	onEdit,
 	onDelete,
 }: TransactionItemProps) {
 	const { t } = useI18n();
@@ -117,17 +119,25 @@ export function TransactionItem({
 				</Text>
 			</View>
 
-			{/* Amount & Delete */}
+			{/* Amount & Actions */}
 			<View className="flex-row items-center">
 				<Text
 					className={`font-semibold ${isDark ? "text-white" : "text-gray-900"}`}
 				>
 					-${transaction.amount.toFixed(2)}
 				</Text>
+				{onEdit && (
+					<TouchableOpacity
+						onPress={() => onEdit(transaction)}
+						className="ml-2 rounded-full p-1"
+					>
+						<Feather name="edit-2" size={16} color="#10B981" />
+					</TouchableOpacity>
+				)}
 				{onDelete && (
 					<TouchableOpacity
 						onPress={() => onDelete(transaction.id)}
-						className="ml-3 rounded-full p-1"
+						className="ml-2 rounded-full p-1"
 					>
 						<Feather name="trash-2" size={16} color="#EF4444" />
 					</TouchableOpacity>
