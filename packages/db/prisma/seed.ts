@@ -27,6 +27,7 @@ const defaultCategories = [
 	{ name: "Education", icon: "book", color: "#10B981", isDefault: true },
 	{ name: "Travel", icon: "map-pin", color: "#06B6D4", isDefault: true },
 	{ name: "Personal Care", icon: "smile", color: "#84CC16", isDefault: true },
+	{ name: "Payments", icon: "credit-card", color: "#6366F1", isDefault: true },
 	{
 		name: "Others",
 		icon: "more-horizontal",
@@ -44,6 +45,42 @@ async function seed() {
 			update: {},
 			create: category,
 		});
+	}
+
+	console.log("Seeding default Payments budget for existing users...");
+
+	// Find the Payments category
+	const paymentsCategory = await prisma.category.findFirst({
+		where: { name: "Payments", isDefault: true },
+	});
+
+	if (paymentsCategory) {
+		// Get all users
+		const users = await prisma.user.findMany();
+
+		for (const user of users) {
+			// Check if user already has a daily Payments budget
+			const existingBudget = await prisma.budget.findFirst({
+				where: {
+					userId: user.id,
+					categoryId: paymentsCategory.id,
+					period: "daily",
+				},
+			});
+
+			// If not, create one
+			if (!existingBudget) {
+				await prisma.budget.create({
+					data: {
+						userId: user.id,
+						categoryId: paymentsCategory.id,
+						limit: 100,
+						period: "daily",
+						strictMode: false,
+					},
+				});
+			}
+		}
 	}
 
 	console.log("Seeding completed!");

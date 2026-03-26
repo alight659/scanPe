@@ -32,4 +32,31 @@ export const auth = betterAuth({
 		},
 	},
 	plugins: [expo()],
+	events: {
+		async onUserCreate({ user }: { user: { id: string } }) {
+			const paymentsCategory = await prisma.category.findFirst({
+				where: { name: "Payments", isDefault: true },
+			});
+
+			if (paymentsCategory) {
+				await prisma.budget.upsert({
+					where: {
+						userId_categoryId_period: {
+							userId: user.id,
+							categoryId: paymentsCategory.id,
+							period: "daily",
+						},
+					},
+					update: {},
+					create: {
+						userId: user.id,
+						categoryId: paymentsCategory.id,
+						limit: 100,
+						period: "daily",
+						strictMode: false,
+					},
+				});
+			}
+		},
+	},
 });
