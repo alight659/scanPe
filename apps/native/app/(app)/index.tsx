@@ -1,7 +1,9 @@
+import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
+	ActivityIndicator,
 	FlatList,
 	ScrollView,
 	Text,
@@ -14,64 +16,11 @@ import { Container } from "@/components/container";
 import { SpendingAlert } from "@/components/spending-alert";
 import { TransactionItem } from "@/components/transaction-item";
 import { useBudgets } from "@/lib/api/budgets";
+import { useTransactions } from "@/lib/api/transactions";
 import { authClient } from "@/lib/auth-client";
 import { useI18n } from "@/lib/i18n/i18n-provider";
 import { useColorScheme } from "@/lib/theme-provider";
 import { DEFAULT_AVATAR } from "./profile";
-
-// Mock transaction data
-const transactions = [
-	{
-		id: "1",
-		merchant: "Starbucks Reserve",
-		category: "Coffee",
-		amount: 12.5,
-		time: "Today, 9:41 AM",
-		icon: "coffee",
-		iconColor: "#92400E",
-		iconBgColor: "#FEF3C7",
-	},
-	{
-		id: "2",
-		merchant: "Whole Foods Market",
-		category: "Groceries",
-		amount: 84.2,
-		time: "Yesterday, 6:30 PM",
-		icon: "shopping-bag",
-		iconColor: "#065F46",
-		iconBgColor: "#D1FAE5",
-	},
-	{
-		id: "3",
-		merchant: "Uber",
-		category: "Transport",
-		amount: 24.0,
-		time: "Yesterday, 8:15 AM",
-		icon: "navigation",
-		iconColor: "#1E40AF",
-		iconBgColor: "#DBEAFE",
-	},
-	{
-		id: "4",
-		merchant: "Netflix",
-		category: "Entertainment",
-		amount: 15.99,
-		time: "Jan 5, 8:00 PM",
-		icon: "film",
-		iconColor: "#991B1B",
-		iconBgColor: "#FEE2E2",
-	},
-	{
-		id: "5",
-		merchant: "Amazon",
-		category: "Shopping",
-		amount: 45.67,
-		time: "Jan 4, 3:20 PM",
-		icon: "package",
-		iconColor: "#7C3AED",
-		iconBgColor: "#EDE9FE",
-	},
-];
 
 export default function Home() {
 	const { colorScheme } = useColorScheme();
@@ -86,6 +35,13 @@ export default function Home() {
 
 	// Fetch real budget data from API
 	const { data: budgets } = useBudgets();
+
+	// Fetch real transactions from API
+	const { data: allTransactions, isLoading: transactionsLoading } =
+		useTransactions();
+
+	// Get recent 5 transactions
+	const recentTransactions = allTransactions?.slice(0, 5) || [];
 
 	// Calculate totals for the selected period across all categories
 	const periodBudgets = budgets?.filter((b) => b.period === period) || [];
@@ -177,15 +133,44 @@ export default function Home() {
 						</TouchableOpacity>
 					</View>
 
+					{/* Loading State */}
+					{transactionsLoading && (
+						<View className="items-center justify-center py-8">
+							<ActivityIndicator size="small" color="#10B981" />
+						</View>
+					)}
+
 					{/* Transaction List */}
-					<FlatList
-						data={transactions}
-						keyExtractor={(item) => item.id}
-						renderItem={({ item }) => (
-							<TransactionItem transaction={item} isDark={isDark} />
-						)}
-						scrollEnabled={false}
-					/>
+					{!transactionsLoading && recentTransactions.length > 0 && (
+						<FlatList
+							data={recentTransactions}
+							keyExtractor={(item) => item.id}
+							renderItem={({ item }) => (
+								<TransactionItem transaction={item} isDark={isDark} />
+							)}
+							scrollEnabled={false}
+						/>
+					)}
+
+					{/* Empty State */}
+					{!transactionsLoading && recentTransactions.length === 0 && (
+						<View className="items-center justify-center py-8">
+							<View
+								className={`mb-3 rounded-full p-4 ${isDark ? "bg-gray-800" : "bg-gray-100"}`}
+							>
+								<Feather
+									name="inbox"
+									size={32}
+									color={isDark ? "#6B7280" : "#9CA3AF"}
+								/>
+							</View>
+							<Text
+								className={`text-center ${isDark ? "text-gray-400" : "text-gray-500"}`}
+							>
+								{t("transactions.noTransactions")}
+							</Text>
+						</View>
+					)}
 				</View>
 			</ScrollView>
 		</Container>

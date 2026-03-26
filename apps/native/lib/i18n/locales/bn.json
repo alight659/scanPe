@@ -78,7 +78,18 @@
 		"searchPlaceholder": "লেনদেন খুঁজুন...",
 		"noTransactions": "কোনো লেনদেন পাওয়া যায়নি",
 		"today": "আজ",
-		"yesterday": "গতকাল"
+		"yesterday": "গতকাল",
+		"addTransaction": "লেনদেন যোগ করুন",
+		"selectBudget": "বাজেট নির্বাচন",
+		"merchant": "ব্যবসায়ী",
+		"merchantPlaceholder": "যেমন Starbucks, Uber",
+		"amount": "পরিমাণ",
+		"description": "বিবরণ (ঐচ্ছিক)",
+		"descriptionPlaceholder": "এটা কিসের জন্য?",
+		"noBudgetsAvailable": "কোনো বাজেট নেই। প্রথমে একটি বাজেট তৈরি করুন।",
+		"createTransaction": "লেনদেন যোগ করুন",
+		"deleteTransaction": "লেনদেন মুছুন",
+		"confirmDelete": "আপনি কি এই লেনদেন মুছতে চান?"
 	},
 	"categories": {
 		"coffee": "কফি",

@@ -1,8 +1,9 @@
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-	FlatList,
+	ActivityIndicator,
+	Alert,
 	ScrollView,
 	Text,
 	TextInput,
@@ -10,177 +11,65 @@ import {
 	View,
 } from "react-native";
 
+import { AddTransactionModal } from "@/components/add-transaction-modal";
 import { Container } from "@/components/container";
-import { TransactionItem } from "@/components/transaction-item";
+import { DeleteConfirmationModal } from "@/components/delete-confirmation-modal";
+import {
+	formatDateHeader,
+	getDateKey,
+	TransactionItem,
+} from "@/components/transaction-item";
+import {
+	useCreateTransaction,
+	useDeleteTransaction,
+	useTransactions,
+} from "@/lib/api/transactions";
 import { useI18n } from "@/lib/i18n/i18n-provider";
 import { useColorScheme } from "@/lib/theme-provider";
-
-// Extended mock transaction data
-const allTransactions = [
-	{
-		id: "1",
-		merchant: "Starbucks Reserve",
-		category: "Coffee",
-		amount: 12.5,
-		time: "Today, 9:41 AM",
-		date: "2025-01-07",
-		icon: "coffee",
-		iconColor: "#92400E",
-		iconBgColor: "#FEF3C7",
-	},
-	{
-		id: "2",
-		merchant: "Whole Foods Market",
-		category: "Groceries",
-		amount: 84.2,
-		time: "Yesterday, 6:30 PM",
-		date: "2025-01-06",
-		icon: "shopping-bag",
-		iconColor: "#065F46",
-		iconBgColor: "#D1FAE5",
-	},
-	{
-		id: "3",
-		merchant: "Uber",
-		category: "Transport",
-		amount: 24.0,
-		time: "Yesterday, 8:15 AM",
-		date: "2025-01-06",
-		icon: "navigation",
-		iconColor: "#1E40AF",
-		iconBgColor: "#DBEAFE",
-	},
-	{
-		id: "4",
-		merchant: "Netflix",
-		category: "Entertainment",
-		amount: 15.99,
-		time: "Jan 5, 8:00 PM",
-		date: "2025-01-05",
-		icon: "film",
-		iconColor: "#991B1B",
-		iconBgColor: "#FEE2E2",
-	},
-	{
-		id: "5",
-		merchant: "Amazon",
-		category: "Shopping",
-		amount: 45.67,
-		time: "Jan 4, 3:20 PM",
-		date: "2025-01-04",
-		icon: "package",
-		iconColor: "#7C3AED",
-		iconBgColor: "#EDE9FE",
-	},
-	{
-		id: "6",
-		merchant: "Shell Gas Station",
-		category: "Transport",
-		amount: 56.0,
-		time: "Jan 4, 10:15 AM",
-		date: "2025-01-04",
-		icon: "droplet",
-		iconColor: "#B45309",
-		iconBgColor: "#FEF3C7",
-	},
-	{
-		id: "7",
-		merchant: "Chipotle",
-		category: "Food",
-		amount: 18.45,
-		time: "Jan 3, 12:30 PM",
-		date: "2025-01-03",
-		icon: "shopping-bag",
-		iconColor: "#DC2626",
-		iconBgColor: "#FEE2E2",
-	},
-	{
-		id: "8",
-		merchant: "Spotify",
-		category: "Entertainment",
-		amount: 9.99,
-		time: "Jan 2, 12:00 AM",
-		date: "2025-01-02",
-		icon: "music",
-		iconColor: "#059669",
-		iconBgColor: "#D1FAE5",
-	},
-	{
-		id: "9",
-		merchant: "Target",
-		category: "Shopping",
-		amount: 127.83,
-		time: "Jan 1, 4:45 PM",
-		date: "2025-01-01",
-		icon: "shopping-cart",
-		iconColor: "#DC2626",
-		iconBgColor: "#FEE2E2",
-	},
-	{
-		id: "10",
-		merchant: "Electric Company",
-		category: "Utilities",
-		amount: 89.5,
-		time: "Dec 31, 2024",
-		date: "2024-12-31",
-		icon: "zap",
-		iconColor: "#F59E0B",
-		iconBgColor: "#FEF3C7",
-	},
-	{
-		id: "11",
-		merchant: "Airbnb",
-		category: "Travel",
-		amount: 450.0,
-		time: "Dec 28, 2024",
-		date: "2024-12-28",
-		icon: "home",
-		iconColor: "#EC4899",
-		iconBgColor: "#FCE7F3",
-	},
-	{
-		id: "12",
-		merchant: "Pharmacy",
-		category: "Health",
-		amount: 32.15,
-		time: "Dec 27, 2024",
-		date: "2024-12-27",
-		icon: "plus-circle",
-		iconColor: "#0891B2",
-		iconBgColor: "#CFFAFE",
-	},
-];
 
 export default function TransactionsScreen() {
 	const { colorScheme } = useColorScheme();
 	const isDark = colorScheme === "dark";
 	const { t } = useI18n();
 	const [searchQuery, setSearchQuery] = useState("");
-	const [filter, setFilter] = useState<"all" | "income" | "expense">("all");
+	const [showAddModal, setShowAddModal] = useState(false);
+	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+	const [transactionToDelete, setTransactionToDelete] = useState<string | null>(
+		null,
+	);
+
+	const { data: transactions, isLoading, error } = useTransactions();
+	const createTransaction = useCreateTransaction();
+	const deleteTransaction = useDeleteTransaction();
 
 	// Calculate totals
-	const totalSpent = allTransactions.reduce((sum, t) => sum + t.amount, 0);
+	const totalSpent = transactions?.reduce((sum, t) => sum + t.amount, 0) || 0;
 
 	// Filter transactions based on search
-	const filteredTransactions = allTransactions.filter((transaction) => {
-		const matchesSearch =
-			searchQuery === "" ||
-			transaction.merchant.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			transaction.category.toLowerCase().includes(searchQuery.toLowerCase());
-		return matchesSearch;
-	});
+	const filteredTransactions =
+		transactions?.filter((transaction) => {
+			const matchesSearch =
+				searchQuery === "" ||
+				transaction.merchant
+					.toLowerCase()
+					.includes(searchQuery.toLowerCase()) ||
+				(transaction.budget?.category?.name || "")
+					.toLowerCase()
+					.includes(searchQuery.toLowerCase());
+			return matchesSearch;
+		}) || [];
 
 	// Group transactions by date
 	const groupedTransactions = filteredTransactions.reduce(
 		(groups, transaction) => {
-			const date = transaction.date;
+			const date = getDateKey(transaction.createdAt);
 			if (!groups[date]) {
 				groups[date] = [];
 			}
 			groups[date].push(transaction);
 			return groups;
 		},
-		{} as Record<string, typeof allTransactions>,
+		{} as Record<string, typeof filteredTransactions>,
 	);
 
 	// Sort dates in descending order
@@ -188,23 +77,41 @@ export default function TransactionsScreen() {
 		(a, b) => new Date(b).getTime() - new Date(a).getTime(),
 	);
 
-	const formatDate = (dateStr: string) => {
-		const date = new Date(dateStr);
-		const today = new Date();
-		const yesterday = new Date(today);
-		yesterday.setDate(yesterday.getDate() - 1);
-
-		if (dateStr === today.toISOString().split("T")[0]) {
-			return t("transactions.today");
-		}
-		if (dateStr === yesterday.toISOString().split("T")[0]) {
-			return t("transactions.yesterday");
-		}
-		return date.toLocaleDateString("en-US", {
-			month: "long",
-			day: "numeric",
-			year: "numeric",
+	const handleCreateTransaction = (data: {
+		budgetId: string;
+		amount: number;
+		merchant: string;
+		description?: string;
+	}) => {
+		createTransaction.mutate(data, {
+			onSuccess: () => {
+				setShowAddModal(false);
+			},
+			onError: (err) => {
+				Alert.alert(t("common.error"), err.message);
+			},
 		});
+	};
+
+	const handleDeletePress = (id: string) => {
+		setTransactionToDelete(id);
+		setDeleteModalVisible(true);
+	};
+
+	const handleConfirmDelete = () => {
+		if (transactionToDelete) {
+			deleteTransaction.mutate(transactionToDelete, {
+				onSuccess: () => {
+					setDeleteModalVisible(false);
+					setTransactionToDelete(null);
+				},
+				onError: (err) => {
+					Alert.alert(t("common.error"), err.message);
+					setDeleteModalVisible(false);
+					setTransactionToDelete(null);
+				},
+			});
+		}
 	};
 
 	return (
@@ -269,7 +176,7 @@ export default function TransactionsScreen() {
 								isDark ? "text-gray-400" : "text-gray-500"
 							}`}
 						>
-							{allTransactions.length} {t("home.transactions")}
+							{transactions?.length || 0} {t("home.transactions")}
 						</Text>
 					</View>
 				</View>
@@ -309,45 +216,109 @@ export default function TransactionsScreen() {
 					</View>
 				</View>
 
-				{/* Transactions List */}
-				<View className="px-6">
-					{sortedDates.map((date) => (
-						<View key={date} className="mb-6">
-							<Text
-								className={`mb-3 font-semibold text-sm ${
-									isDark ? "text-gray-400" : "text-gray-500"
-								}`}
-							>
-								{formatDate(date)}
-							</Text>
-							{groupedTransactions[date].map((transaction) => (
-								<TransactionItem
-									key={transaction.id}
-									transaction={transaction}
-									isDark={isDark}
-								/>
-							))}
-						</View>
-					))}
+				{/* Loading State */}
+				{isLoading && (
+					<View className="items-center justify-center py-12">
+						<ActivityIndicator size="large" color="#10B981" />
+						<Text
+							className={`mt-4 text-base ${isDark ? "text-gray-400" : "text-gray-500"}`}
+						>
+							{t("common.loading")}
+						</Text>
+					</View>
+				)}
 
-					{filteredTransactions.length === 0 && (
-						<View className="items-center justify-center py-12">
-							<Feather
-								name="search"
-								size={48}
-								color={isDark ? "#374151" : "#D1D5DB"}
-							/>
-							<Text
-								className={`mt-4 text-center ${
-									isDark ? "text-gray-400" : "text-gray-500"
-								}`}
-							>
-								{t("transactions.noTransactions")}
-							</Text>
-						</View>
-					)}
-				</View>
+				{/* Error State */}
+				{error && (
+					<View className="items-center justify-center px-6 py-12">
+						<Feather name="alert-circle" size={48} color="#EF4444" />
+						<Text
+							className={`mt-4 text-center text-base ${isDark ? "text-gray-300" : "text-gray-600"}`}
+						>
+							{error.message || t("common.error")}
+						</Text>
+					</View>
+				)}
+
+				{/* Transactions List */}
+				{!isLoading && !error && (
+					<View className="px-6">
+						{sortedDates.map((date) => (
+							<View key={date} className="mb-6">
+								<Text
+									className={`mb-3 font-semibold text-sm ${
+										isDark ? "text-gray-400" : "text-gray-500"
+									}`}
+								>
+									{formatDateHeader(groupedTransactions[date][0].createdAt, t)}
+								</Text>
+								{groupedTransactions[date].map((transaction) => (
+									<TransactionItem
+										key={transaction.id}
+										transaction={transaction}
+										isDark={isDark}
+										onDelete={handleDeletePress}
+									/>
+								))}
+							</View>
+						))}
+
+						{filteredTransactions.length === 0 && (
+							<View className="items-center justify-center py-12">
+								<Feather
+									name="inbox"
+									size={48}
+									color={isDark ? "#374151" : "#D1D5DB"}
+								/>
+								<Text
+									className={`mt-4 text-center ${
+										isDark ? "text-gray-400" : "text-gray-500"
+									}`}
+								>
+									{t("transactions.noTransactions")}
+								</Text>
+							</View>
+						)}
+					</View>
+				)}
 			</ScrollView>
+
+			{/* FAB - Add Transaction */}
+			<TouchableOpacity
+				onPress={() => setShowAddModal(true)}
+				className="absolute right-6 bottom-6 h-14 w-14 items-center justify-center rounded-full bg-emerald-500"
+				style={{
+					shadowColor: "#10B981",
+					shadowOffset: { width: 0, height: 4 },
+					shadowOpacity: 0.3,
+					shadowRadius: 8,
+					elevation: 8,
+				}}
+			>
+				<Feather name="plus" size={28} color="#FFFFFF" />
+			</TouchableOpacity>
+
+			{/* Add Transaction Modal */}
+			<AddTransactionModal
+				visible={showAddModal}
+				onClose={() => setShowAddModal(false)}
+				onSubmit={handleCreateTransaction}
+				isLoading={createTransaction.isPending}
+			/>
+
+			{/* Delete Confirmation Modal */}
+			<DeleteConfirmationModal
+				visible={deleteModalVisible}
+				title={t("transactions.deleteTransaction")}
+				message={t("transactions.confirmDelete")}
+				isLoading={deleteTransaction.isPending}
+				onConfirm={handleConfirmDelete}
+				onCancel={() => {
+					setDeleteModalVisible(false);
+					setTransactionToDelete(null);
+				}}
+				isDark={isDark}
+			/>
 		</Container>
 	);
 }

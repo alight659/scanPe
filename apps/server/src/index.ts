@@ -481,6 +481,165 @@ app.delete("/budgets/:id", authMiddleware, async (req, res) => {
 	}
 });
 
+// Transaction API Routes
+
+// Validation schemas
+const createTransactionSchema = z.object({
+	budgetId: z.string(),
+	amount: z.number().positive(),
+	merchant: z.string().min(1).max(100),
+	description: z.string().max(255).optional(),
+});
+
+// Get all transactions for current user with budget/category info
+app.get("/transactions", authMiddleware, async (req, res) => {
+	try {
+		const user = (req as any).user;
+		const transactions = await prisma.transaction.findMany({
+			where: { userId: user.id },
+			include: {
+				budget: {
+					include: { category: true },
+				},
+			},
+			orderBy: { createdAt: "desc" },
+		});
+
+		const result = transactions.map((t: any) => ({
+			id: t.id,
+			userId: t.userId,
+			budgetId: t.budgetId,
+			amount: Number(t.amount),
+			merchant: t.merchant,
+			description: t.description,
+			createdAt: t.createdAt,
+			budget: t.budget
+				? {
+						id: t.budget.id,
+						category: {
+							name: t.budget.category.name,
+							icon: t.budget.category.icon,
+							color: t.budget.category.color,
+						},
+					}
+				: null,
+		}));
+
+		res.json(result);
+	} catch (error) {
+		console.error("[Transactions] Error fetching transactions:", error);
+		res.status(500).json({ error: "Failed to fetch transactions" });
+	}
+});
+
+// Create a new transaction
+app.post("/transactions", authMiddleware, async (req, res) => {
+	try {
+		const user = (req as any).user;
+		const result = createTransactionSchema.safeParse(req.body);
+
+		if (!result.success) {
+			return res.status(400).json({
+				error: "Invalid input",
+				details: result.error.issues,
+			});
+		}
+
+		const { budgetId, amount, merchant, description } = result.data;
+
+		// Verify budget belongs to user
+		const budget = await prisma.budget.findFirst({
+			where: { id: budgetId, userId: user.id },
+			include: { category: true },
+		});
+
+		if (!budget) {
+			return res.status(404).json({ error: "Budget not found" });
+		}
+
+		// Check strict mode - prevent transaction if budget exceeded
+		if (budget.strictMode) {
+			const existingTransactions = await prisma.transaction.findMany({
+				where: { budgetId },
+			});
+			const currentSpent = existingTransactions.reduce(
+				(sum: number, t: any) => sum + Number(t.amount),
+				0,
+			);
+			if (currentSpent + amount > Number(budget.limit)) {
+				return res.status(400).json({
+					error:
+						"Strict mode is enabled. This transaction would exceed your budget limit.",
+				});
+			}
+		}
+
+		const transaction = await prisma.transaction.create({
+			data: {
+				userId: user.id,
+				budgetId,
+				amount,
+				merchant,
+				description: description || null,
+			},
+			include: {
+				budget: {
+					include: { category: true },
+				},
+			},
+		});
+
+		res.status(201).json({
+			id: transaction.id,
+			userId: transaction.userId,
+			budgetId: transaction.budgetId,
+			amount: Number(transaction.amount),
+			merchant: transaction.merchant,
+			description: transaction.description,
+			createdAt: transaction.createdAt,
+			budget: transaction.budget
+				? {
+						id: transaction.budget.id,
+						category: {
+							name: transaction.budget.category.name,
+							icon: transaction.budget.category.icon,
+							color: transaction.budget.category.color,
+						},
+					}
+				: null,
+		});
+	} catch (error) {
+		console.error("[Transactions] Error creating transaction:", error);
+		res.status(500).json({ error: "Failed to create transaction" });
+	}
+});
+
+// Delete a transaction
+app.delete("/transactions/:id", authMiddleware, async (req, res) => {
+	try {
+		const user = (req as any).user;
+		const { id } = req.params;
+
+		// Verify transaction belongs to user
+		const existingTransaction = await prisma.transaction.findFirst({
+			where: { id, userId: user.id },
+		});
+
+		if (!existingTransaction) {
+			return res.status(404).json({ error: "Transaction not found" });
+		}
+
+		await prisma.transaction.delete({
+			where: { id },
+		});
+
+		res.status(204).send();
+	} catch (error) {
+		console.error("[Transactions] Error deleting transaction:", error);
+		res.status(500).json({ error: "Failed to delete transaction" });
+	}
+});
+
 app.get("/", (_req, res) => {
 	res.status(200).send("OK");
 });

@@ -78,7 +78,18 @@
 		"searchPlaceholder": "लेन-देन खोजें...",
 		"noTransactions": "कोई लेन-देन नहीं मिला",
 		"today": "आज",
-		"yesterday": "कल"
+		"yesterday": "कल",
+		"addTransaction": "लेन-देन जोड़ें",
+		"selectBudget": "बजट चुनें",
+		"merchant": "व्यापारी",
+		"merchantPlaceholder": "जैसे Starbucks, Uber",
+		"amount": "राशि",
+		"description": "विवरण (वैकल्पिक)",
+		"descriptionPlaceholder": "यह किस लिए था?",
+		"noBudgetsAvailable": "कोई बजट उपलब्ध नहीं। पहले बजट बनाएं।",
+		"createTransaction": "लेन-देन जोड़ें",
+		"deleteTransaction": "लेन-देन हटाएं",
+		"confirmDelete": "क्या आप वाकई इस लेन-देन को हटाना चाहते हैं?"
 	},
 	"categories": {
 		"coffee": "कॉफी",

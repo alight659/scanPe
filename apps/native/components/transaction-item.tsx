@@ -1,45 +1,91 @@
 import { Feather } from "@expo/vector-icons";
-import React from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 import { useI18n } from "@/lib/i18n/i18n-provider";
-
-interface Transaction {
-	id: string;
-	merchant: string;
-	category: string;
-	amount: number;
-	time: string;
-	icon: string;
-	iconColor: string;
-	iconBgColor: string;
-}
+import type { Transaction } from "@/types/transaction";
 
 interface TransactionItemProps {
 	transaction: Transaction;
 	isDark: boolean;
+	onDelete?: (id: string) => void;
 }
 
-export function TransactionItem({ transaction, isDark }: TransactionItemProps) {
+function getRelativeTime(dateStr: string, t: (key: string) => string): string {
+	const date = new Date(dateStr);
+	const now = new Date();
+	const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	const yesterday = new Date(today);
+	yesterday.setDate(yesterday.getDate() - 1);
+	const transactionDate = new Date(
+		date.getFullYear(),
+		date.getMonth(),
+		date.getDate(),
+	);
+
+	const timeStr = date.toLocaleTimeString("en-US", {
+		hour: "numeric",
+		minute: "2-digit",
+		hour12: true,
+	});
+
+	if (transactionDate.getTime() === today.getTime()) {
+		return `${t("transactions.today")}, ${timeStr}`;
+	}
+	if (transactionDate.getTime() === yesterday.getTime()) {
+		return `${t("transactions.yesterday")}, ${timeStr}`;
+	}
+	return `${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}, ${timeStr}`;
+}
+
+export function getDateKey(dateStr: string): string {
+	const date = new Date(dateStr);
+	return date.toISOString().split("T")[0];
+}
+
+export function formatDateHeader(
+	dateStr: string,
+	t: (key: string) => string,
+): string {
+	const date = new Date(dateStr);
+	const now = new Date();
+	const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	const yesterday = new Date(today);
+	yesterday.setDate(yesterday.getDate() - 1);
+	const transactionDate = new Date(
+		date.getFullYear(),
+		date.getMonth(),
+		date.getDate(),
+	);
+
+	if (transactionDate.getTime() === today.getTime()) {
+		return t("transactions.today");
+	}
+	if (transactionDate.getTime() === yesterday.getTime()) {
+		return t("transactions.yesterday");
+	}
+	return date.toLocaleDateString("en-US", {
+		month: "long",
+		day: "numeric",
+		year: "numeric",
+	});
+}
+
+export function TransactionItem({
+	transaction,
+	isDark,
+	onDelete,
+}: TransactionItemProps) {
 	const { t } = useI18n();
 
-	// Get localized category
+	const categoryName = transaction.budget?.category?.name || "Expense";
+	const categoryIcon = transaction.budget?.category?.icon || "dollar-sign";
+	const categoryColor = transaction.budget?.category?.color || "#6B7280";
+	const iconBgColor = `${categoryColor}20`;
+
 	const getLocalizedCategory = (category: string) => {
 		const categoryKey = category.toLowerCase();
 		const translation = t(`categories.${categoryKey}`);
-		// If translation is not found, return original
 		return translation === `categories.${categoryKey}` ? category : translation;
-	};
-
-	// Localize time portion (Today, Yesterday)
-	const getLocalizedTime = (time: string) => {
-		if (time.startsWith("Today")) {
-			return time.replace("Today", t("transactions.today"));
-		}
-		if (time.startsWith("Yesterday")) {
-			return time.replace("Yesterday", t("transactions.yesterday"));
-		}
-		return time;
 	};
 
 	return (
@@ -51,13 +97,9 @@ export function TransactionItem({ transaction, isDark }: TransactionItemProps) {
 			{/* Icon Container */}
 			<View
 				className="mr-4 h-12 w-12 items-center justify-center rounded-full"
-				style={{ backgroundColor: transaction.iconBgColor }}
+				style={{ backgroundColor: iconBgColor }}
 			>
-				<Feather
-					name={transaction.icon as any}
-					size={20}
-					color={transaction.iconColor}
-				/>
+				<Feather name={categoryIcon as any} size={20} color={categoryColor} />
 			</View>
 
 			{/* Details */}
@@ -70,17 +112,27 @@ export function TransactionItem({ transaction, isDark }: TransactionItemProps) {
 				<Text
 					className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}
 				>
-					{getLocalizedCategory(transaction.category)} •{" "}
-					{getLocalizedTime(transaction.time)}
+					{getLocalizedCategory(categoryName)} •{" "}
+					{getRelativeTime(transaction.createdAt, t)}
 				</Text>
 			</View>
 
-			{/* Amount */}
-			<Text
-				className={`font-semibold ${isDark ? "text-white" : "text-gray-900"}`}
-			>
-				-${transaction.amount.toFixed(2)}
-			</Text>
+			{/* Amount & Delete */}
+			<View className="flex-row items-center">
+				<Text
+					className={`font-semibold ${isDark ? "text-white" : "text-gray-900"}`}
+				>
+					-${transaction.amount.toFixed(2)}
+				</Text>
+				{onDelete && (
+					<TouchableOpacity
+						onPress={() => onDelete(transaction.id)}
+						className="ml-3 rounded-full p-1"
+					>
+						<Feather name="trash-2" size={16} color="#EF4444" />
+					</TouchableOpacity>
+				)}
+			</View>
 		</View>
 	);
 }
